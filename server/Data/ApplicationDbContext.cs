@@ -10,7 +10,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
-    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<LineItem> LineItems { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Cart> Carts { get; set; }
 
@@ -19,6 +19,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new OrderConfiguration());
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
         modelBuilder.ApplyConfiguration(new CartConfiguration());
+        modelBuilder.ApplyConfiguration(new LineItemConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

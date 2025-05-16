@@ -9,59 +9,91 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
     {
         _context = context;
     }
-
-    public async Task<IEnumerable<Cart>> GetCartByUserId(int userId)
+    public override async Task<IEnumerable<Cart>> GetAllAsync()
     {
         return await _context.Carts
-        .Include(c => c.Product)
-        .Where(c => c.UserId == userId)
+        .Include(c => c.Items)
+        .ThenInclude(i => i.Product)
         .ToListAsync();
     }
-    public async Task EmptyCartByUserId(int userId)
-    {
-        var cartItems = await _context.Carts
-            .Where(c => c.UserId == userId)
-            .ToListAsync();
 
-        _context.Carts.RemoveRange(cartItems);
+    public override async Task<Cart?> GetByIdAsync(int id)
+    {
+        return await _context.Carts
+        .Include(c => c.Items)
+        .ThenInclude(i => i.Product)
+        .FirstOrDefaultAsync(c => c.Id == id);
+    }
+
+    public async Task<Cart?> GetCartByUserId(int userId)
+    {
+        return await _context.Carts
+        .Include(c => c.Items)
+        .ThenInclude(i => i.Product)
+        .FirstOrDefaultAsync(c => c.UserId == userId);
     }
     public async Task AddToCart(int userId, int productId, int quantity)
     {
-        var existingCartItem = await _context.Carts
-           .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductID == productId);
+        var cart = await GetCartByUserId(userId);
 
-        if (existingCartItem != null)
+        if (cart == null)
         {
-            existingCartItem.Quantity += quantity;
-            _context.Carts.Update(existingCartItem);
+            cart = new Cart { UserId = userId };
+            await _context.Carts.AddAsync(cart);
+            await _context.SaveChangesAsync();
+        }
+
+        var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+
+        if (existingItem != null)
+        {
+            existingItem.Quantity += quantity;
         }
         else
         {
-            var newCartItem = new Cart
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null) return;
+
+            var newItem = new LineItem
             {
-                UserId = userId,
-                ProductID = productId,
-                Quantity = quantity
+                ProductId = productId,
+                Quantity = quantity,
+                UnitPrice = product.Price,
+                CartId = cart.Id,
+                //Product = product  // Explicitly set the product reference
             };
-            await _context.Carts.AddAsync(newCartItem);
+
+            cart.Items.Add(newItem);
         }
     }
-    public async Task RemoveFromCart(int userId, int productId, int quantity)
-    {
-        var existingCartItem = await _context.Carts
-            .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductID == productId);
 
-        if (existingCartItem != null)
+    public async Task<bool> RemoveFromCart(int userId, int productId, int quantity)
+    {
+        var cart = await GetCartByUserId(userId);
+        if (cart == null) return false;
+
+        var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+        if (existingItem == null) return false;
+
+        if (existingItem.Quantity > quantity)
         {
-            if (existingCartItem.Quantity > quantity)
-            {
-                existingCartItem.Quantity -= quantity;
-                _context.Carts.Update(existingCartItem);
-            }
-            else
-            {
-                _context.Carts.Remove(existingCartItem);
-            }
+            existingItem.Quantity -= quantity;
         }
+        else
+        {
+            _context.LineItems.Remove(existingItem);
+        }
+
+        return true;
+    }
+    public async Task<bool> EmptyCartByUserId(int userId)
+    {
+        var cart = await GetCartByUserId(userId);
+        if (cart == null) return false;
+
+        _context.LineItems.RemoveRange(cart.Items);
+        //_context.Carts.Remove(cart);
+
+        return true;
     }
 }

@@ -8,6 +8,6 @@ public class User
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Navigation Properties
-    public ICollection<Cart> Carts { get; set; } = new List<Cart>();
-    public ICollection<Order> Orders { get; set; } = new List<Order>();
+    public ICollection<Cart>? Carts { get; set; }
+    public ICollection<Order>? Orders { get; set; }
 }

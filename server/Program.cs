@@ -1,8 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    ContentRootPath = AppContext.BaseDirectory,
+    Args = args
+});
 
+builder.Configuration
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+    
+// Register services
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -20,11 +31,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
-// Configure the HTTP request pipeline.
+
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
 app.MapControllers();
 
 app.MapGet("/test", () => Results.Ok("API is up and running!"));

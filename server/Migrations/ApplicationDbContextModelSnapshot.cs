@@ -29,18 +29,10 @@ namespace server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ProductID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductID");
 
                     b.HasIndex("UserId");
 
@@ -68,6 +60,40 @@ namespace server.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("LineItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CartId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("LineItems");
+                });
+
             modelBuilder.Entity("Order", b =>
                 {
                     b.Property<int>("Id")
@@ -79,12 +105,11 @@ namespace server.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
-                    b.Property<float>("TotalAmount")
-                        .HasColumnType("real");
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -94,38 +119,6 @@ namespace server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("Product", b =>
@@ -150,8 +143,8 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("Stock")
                         .HasColumnType("integer");
@@ -197,21 +190,36 @@ namespace server.Migrations
 
             modelBuilder.Entity("Cart", b =>
                 {
-                    b.HasOne("Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("User", "User")
                         .WithMany("Carts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
-
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LineItem", b =>
+                {
+                    b.HasOne("Cart", "Cart")
+                        .WithMany("Items")
+                        .HasForeignKey("CartId");
+
+                    b.HasOne("Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId");
+
+                    b.HasOne("Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Order", b =>
@@ -225,25 +233,6 @@ namespace server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("OrderItem", b =>
-                {
-                    b.HasOne("Order", "Order")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("Product", b =>
                 {
                     b.HasOne("Category", "Category")
@@ -255,6 +244,11 @@ namespace server.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Cart", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("Category", b =>
                 {
                     b.Navigation("Products");
@@ -262,7 +256,7 @@ namespace server.Migrations
 
             modelBuilder.Entity("Order", b =>
                 {
-                    b.Navigation("OrderItems");
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("User", b =>

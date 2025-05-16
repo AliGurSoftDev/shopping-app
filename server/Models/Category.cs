@@ -5,5 +5,5 @@ public class Category
     public string Description { get; set; } = string.Empty;
 
     // Navigation Property
-    public ICollection<Product> Products { get; set; } = new List<Product>();
+    public ICollection<Product>? Products { get; set; }
 }

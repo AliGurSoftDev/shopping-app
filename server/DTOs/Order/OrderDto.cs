@@ -1,10 +1,12 @@
+using ShoppingProject.Common;
+
 public class OrderDto
 {
     public int Id { get; set; }
     public int UserId { get; set; }
     public string Status { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
-    public List<OrderItemDto> OrderItems { get; set; } = new();
+    public DateTime OrderDate { get; set; }
+    public List<LineItemDto> Items { get; set; } = new();
     public decimal TotalAmount { get; set; }
 
 }

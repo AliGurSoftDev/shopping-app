@@ -37,22 +37,22 @@ public class ProductController : ControllerBase
 
     // Create a new product
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] ProductCreateDto productCreateDto)
+    public async Task<IActionResult> Create([FromBody] ProductDto productDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var product = _mapper.Map<Product>(productCreateDto);
+        var product = _mapper.Map<Product>(productDto);
         await _unitOfWork.Products.AddAsync(product);
         await _unitOfWork.SaveChangesAsync();
 
-        var productDto = _mapper.Map<ProductDto>(product);
-        return CreatedAtAction(nameof(GetById), new { id = productDto.Id }, productDto);
+        var newProductDto = _mapper.Map<ProductDto>(product);
+        return CreatedAtAction(nameof(GetById), new { id = newProductDto.Id }, newProductDto);
     }
 
     //Update an existing product
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateDto productUpdateDto)
+    public async Task<IActionResult> Update(int id, [FromBody] ProductDto productDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -60,8 +60,9 @@ public class ProductController : ControllerBase
         var existingProduct = await _unitOfWork.Products.GetByIdAsync(id);
         if (existingProduct == null)
             return NotFound();
-
-        _mapper.Map(productUpdateDto, existingProduct);
+            if(productDto.Name.Equals(default))
+            Console.WriteLine("girdi");
+        _mapper.Map(productDto, existingProduct);
         _unitOfWork.Products.Update(existingProduct);
         await _unitOfWork.SaveChangesAsync();
 

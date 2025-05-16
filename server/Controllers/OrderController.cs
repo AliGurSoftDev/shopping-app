@@ -1,5 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing.Tree;
+using Microsoft.VisualBasic;
+using ShoppingProject.Common;
 
 [ApiController]
 [Route("api/order")]
@@ -36,7 +39,7 @@ public class OrderController : ControllerBase
     }
 
     // Get orders by userId
-    [HttpGet("user/{userId}")]
+    [HttpGet("{userId}/get")]
     public async Task<IActionResult> GetOrdersByUserId(int userId)
     {
         var orders = await _unitOfWork.Orders.GetOrdersByUserIdAsync(userId);
@@ -48,7 +51,7 @@ public class OrderController : ControllerBase
     }
 
     // Get orders by status
-    [HttpGet("status/{status}")]
+    [HttpGet("status={status}")]
     public async Task<IActionResult> GetOrdersByStatus(string status)
     {
         var orders = await _unitOfWork.Orders.GetOrdersByStatusAsync(status);
@@ -60,7 +63,7 @@ public class OrderController : ControllerBase
     }
 
     // Get orders by userId and status
-    [HttpGet("user/{userId}/status={status}")]
+    [HttpGet("{userId}/get/status={status}")]
     public async Task<IActionResult> GetOrdersByUserIdAndStatus(int userId, string status)
     {
         var orders = await _unitOfWork.Orders.GetOrdersByUserIdAndStatusAsync(userId, status);
@@ -74,22 +77,47 @@ public class OrderController : ControllerBase
 
     // Create a new order
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] OrderCreateDto orderCreateDto)
+    public async Task<IActionResult> Create([FromBody] OrderDto orderDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var order = _mapper.Map<Order>(orderCreateDto);
+        var order = _mapper.Map<Order>(orderDto);
         await _unitOfWork.Orders.AddAsync(order);
         await _unitOfWork.SaveChangesAsync();
 
-        var orderDto = _mapper.Map<ProductDto>(order);
-        return CreatedAtAction(nameof(GetById), new { id = orderDto.Id }, orderDto);
+        var newOrderDto = _mapper.Map<OrderDto>(order);
+        return CreatedAtAction(nameof(GetById), new { id = newOrderDto.Id }, newOrderDto);
+    }
+
+    [HttpPost("{userId}/placeOrder")]
+    public async Task<IActionResult> CreateOrder(int userId)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var cart = await _unitOfWork.Carts.GetCartByUserId(userId);
+        if (cart == null || cart.Items == null || !cart.Items.Any())
+            return NotFound("No items found in the cart.");
+
+        try
+        {
+            var newOrder = await _unitOfWork.Orders.CreateOrder(cart);
+            if (newOrder == null)
+                return StatusCode(500, "Order creation failed.");
+
+            await _unitOfWork.SaveChangesAsync();
+            return Ok($"Order No:{newOrder.Id} successfully created.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while creating the order: {ex.Message}");
+        }
     }
 
     //Update an existing Order
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] OrderUpdateDto orderUpdateDto)
+    public async Task<IActionResult> Update(int id, [FromBody] OrderDto orderDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -98,8 +126,18 @@ public class OrderController : ControllerBase
         if (existingOrder == null)
             return NotFound();
 
-        _mapper.Map(orderUpdateDto, existingOrder);
+        _mapper.Map(orderDto, existingOrder);
         _unitOfWork.Orders.Update(existingOrder);
+        await _unitOfWork.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    //Update an an existing Order's Status
+    [HttpPut("{id}/status={status}")]
+    public async Task<IActionResult> UpdateOrderStatus(int id, string status)
+    {
+        await _unitOfWork.Orders.UpdateOrderStatus(id, status);
         await _unitOfWork.SaveChangesAsync();
 
         return NoContent();

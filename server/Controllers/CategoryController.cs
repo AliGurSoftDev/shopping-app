@@ -31,28 +31,28 @@ public class CategoryController : ControllerBase
         if (category == null)
             return NotFound();
 
-        var categoryDtos = _mapper.Map<IEnumerable<CategoryDto>>(category);
-        return Ok(categoryDtos);
+        var categoryDto = _mapper.Map<CategoryDto>(category);
+        return Ok(categoryDto);
     }
 
     // Create a new category
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CategoryCreateDto categoryCreateDto)
+    public async Task<IActionResult> Create([FromBody] CategoryDto categoryDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var category = _mapper.Map<Category>(categoryCreateDto);
+        var category = _mapper.Map<Category>(categoryDto);
         await _unitOfWork.Categories.AddAsync(category);
         await _unitOfWork.SaveChangesAsync();
 
-        var categoryDto = _mapper.Map<CategoryDto>(category);
-        return CreatedAtAction(nameof(GetById), new { id = categoryDto.Id }, categoryDto);
+        var newCategoryDto = _mapper.Map<CategoryDto>(category);
+        return CreatedAtAction(nameof(GetById), new { id = newCategoryDto.Id }, newCategoryDto);
     }
 
     //Update an existing category
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CategoryUpdateDto categoryUpdateDto)
+    public async Task<IActionResult> Update(int id, [FromBody] CategoryDto categoryDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -61,7 +61,7 @@ public class CategoryController : ControllerBase
         if (existingCategory == null)
             return NotFound();
 
-        _mapper.Map(categoryUpdateDto, existingCategory);
+        _mapper.Map(categoryDto, existingCategory);
         _unitOfWork.Categories.Update(existingCategory);
         await _unitOfWork.SaveChangesAsync();
 
