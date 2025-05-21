@@ -13,7 +13,7 @@ public class MappingProfile : Profile
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null && !srcMember.Equals(GetDefaultValue(srcMember.GetType()))));
 
         // Product
-        //CreateMap<Product, ProductDto>();
+        CreateMap<Product, ProductDto>();
         CreateMap<ProductDto, Product>().ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null && !srcMember.Equals(GetDefaultValue(srcMember.GetType()))));
 
