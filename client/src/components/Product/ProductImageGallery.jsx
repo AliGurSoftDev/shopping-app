@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const ProductImageGallery = ({ productId }) => {
+const ProductImageGallery = ({ productId, imageSize = 96 }) => {
   const [imageCount, setImageCount] = useState(0);
   const [currentImage, setCurrentImage] = useState(1);
   const [fade, setFade] = useState(false);
@@ -62,7 +62,7 @@ const ProductImageGallery = ({ productId }) => {
   }, [productId]);
 
   return (
-    <div className="relative w-96 h-96">
+    <div className={`relative h-${imageSize} w-${imageSize}`}>
       {imageCount ? (
         <>
           <img
@@ -87,7 +87,7 @@ const ProductImageGallery = ({ productId }) => {
         </>
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-2xl">
-          {imageCount === 0 ? "No Images Available" : "Loading..."}
+          {imageCount === 0 ? <img src={`/images/placeholder.jpg`} className={`w-full h-full object-cover rounded-2xl`}/> : "Loading..."}
         </div>
       )}
     </div>

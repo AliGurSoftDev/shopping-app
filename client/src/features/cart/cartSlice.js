@@ -26,6 +26,22 @@ export const emptyCart = createAsyncThunk('cart/emptyCart', async (userId) => {
   return userId;
 });
 
+export const removeFromCart = createAsyncThunk(
+  'cart/removeFromCart',
+  async ({ userId, productId, quantity }) => {
+    const response = await fetch(`http://localhost:5078/api/cart/${userId}/remove`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId, quantity }),
+    });
+
+    if (!response.ok) throw new Error('Failed to remove item from cart');
+    
+    // Refresh cart
+    return userId;
+  }
+);
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {

@@ -70,13 +70,13 @@ const CartSideBar = ({ userId }) => {
 
         <div className="pl-8 mt-6 text-center">
           <button
-            className="w-full bg-violet-500 hover:bg-violet-600 active:bg-violet-300 transition-colors duration-100 focus:!outline-none
+            className="w-full bg-violet-500 hover:bg-green-500 active:bg-violet-300 transition-colors duration-100 focus:!outline-none
              text-white font-semibold hover:text-white py-2 px-4 border border-violet-500 hover:border-transparent rounded">
               Checkout
           </button>
           <button 
             className="mt-4 w-full bg-transparent active:bg-violet-300 transition-colors duration-100 focus:!outline-none
-            hover:bg-violet-600 text-violet-700 font-semibold hover:text-white py-2 px-4 border border-violet-500 hover:border-transparent rounded"
+            hover:bg-red-500 text-violet-700 font-semibold hover:text-white py-2 px-4 border border-violet-500 hover:border-transparent rounded"
             onClick={handleEmptyCart}>
             Empty Cart
           </button>

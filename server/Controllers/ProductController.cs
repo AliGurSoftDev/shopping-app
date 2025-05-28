@@ -35,6 +35,14 @@ public class ProductController : ControllerBase
         return Ok(productDto);
     }
 
+    [HttpGet("category={categoryId}")]
+    public async Task<IActionResult> GetProductByCategory(int categoryId)
+    {
+        var products = await _unitOfWork.Products.GetByCategoryAsync(categoryId);
+        var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
+        return Ok(productDtos);
+    }
+
     // Create a new product
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] ProductDto productDto)

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'; // Eğer react-router kullanıyorsan
-import ProductDetails from '../components/Product/ProductDetails.jsx';
-import ProductActions from '../components/Product/ProductActions.jsx';
-import ProductImageGallery from '../components/Product/ProductImageGallery';
-import CartSideBar from '../components/Cart/CartSideBar.jsx';
-import MenuBar from '../components/Menu/MenuBar.jsx';
+import ProductDetails from '../components/product/ProductDetails.jsx';
+import ProductActions from '../components/product/ProductActions.jsx';
+import ProductImageGallery from '../components/product/ProductImageGallery.jsx';
+import CartSideBar from '../components/cart/CartSideBar.jsx';
+import MenuBar from '../components/menu/MenuBar.jsx';
+import Breadcrumb from '../components/ui/BreadCrumb.jsx';
 
 const ProductPage = () => {
   const { id } = useParams(); // URL'den product id alıyoruz, örn: /product/3
@@ -12,6 +13,7 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userId] = useState(1);
+  const [category, setCategory] = useState(null);
   useEffect(() => {
     // API'den veri çek
     const fetchProduct = async () => {
@@ -32,6 +34,25 @@ const ProductPage = () => {
     fetchProduct();
   }, [id]);
 
+  useEffect(() => {
+  if (!product) return;
+
+  const fetchCategory = async () => {
+    try {
+      const response = await fetch(`http://localhost:5078/api/category/${product.categoryId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCategory(data);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  fetchCategory();
+}, [product]); // sadece product değiştiğinde çalışır
+
+
   if (loading) return <p>Yükleniyor...</p>;
   if (error) return <p>Hata: {error}</p>;
   if (!product) return <p>Ürün bulunamadı</p>;
@@ -39,12 +60,19 @@ const ProductPage = () => {
   return (
     <div className="justify-items-center">
       <MenuBar></MenuBar>
+      <Breadcrumb 
+      items={[
+          { label: "Categories", to: "/categories" },
+          { label: category?.name || "Loading...", to: `/category/${product.categoryId}` },
+          { label: product?.name || "Loading..."}
+        ]}
+      />
       <CartSideBar userId={userId}></CartSideBar>
       <div className="p-8 grid grid-cols-1 md:grid-cols-2  gap-8">
       <div className="grid grid-rows-2">
               <div className='p-8 text-xl text-center font-sans font-semibold text-violet-500 row-start-1 row-end-4'><h1>{product.name}</h1></div>
 
-        <ProductImageGallery productId={product.id} />
+        <div className='h-96 w-96'><ProductImageGallery productId={product.id} /></div>
 
         </div>
 
