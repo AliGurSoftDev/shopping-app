@@ -13,6 +13,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<LineItem> LineItems { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Cart> Carts { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<Country> Countries { get; set; }
+    public DbSet<City> Cities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

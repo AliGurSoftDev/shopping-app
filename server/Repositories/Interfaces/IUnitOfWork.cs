@@ -5,6 +5,7 @@ public interface IUnitOfWork : IDisposable
     IOrderRepository Orders { get; }
     ICategoryRepository Categories { get; }
     ICartRepository Carts { get; }
+    IAddressRepository Addresses { get; }
 
     Task<int> SaveChangesAsync();
 }

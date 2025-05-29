@@ -7,13 +7,15 @@ public class UnitOfWork : IUnitOfWork
     public IOrderRepository Orders { get; private set; }
     public ICategoryRepository Categories { get; private set; }
     public ICartRepository Carts { get; private set; }
+    public IAddressRepository Addresses { get; private set; }
 
     public UnitOfWork(ApplicationDbContext context,
                       IUserRepository users,
                       IProductRepository products,
                       IOrderRepository orders,
                       ICategoryRepository categories,
-                      ICartRepository carts)
+                      ICartRepository carts,
+                      IAddressRepository addresses)
     {
         _context = context;
         Users = users;
@@ -21,6 +23,7 @@ public class UnitOfWork : IUnitOfWork
         Orders = orders;
         Categories = categories;
         Carts = carts;
+        Addresses = addresses;
     }
 
     public async Task<int> SaveChangesAsync()

@@ -38,6 +38,19 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items))
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null && !srcMember.Equals(GetDefaultValue(srcMember.GetType()))));
         CreateMap<OrderStatusUpdateDto, Order>();
+
+        // Address
+        CreateMap<Address, AddressDto>();
+        CreateMap<AddressDto, Address>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null && !srcMember.Equals(GetDefaultValue(srcMember.GetType()))));
+
+        //Country
+        CreateMap<Country, CountryDto>();
+        CreateMap<CountryDto, Country>();
+
+        //City
+        CreateMap<City, CityDto>();
+        CreateMap<CityDto, City>();
     }
 
     private object GetDefaultValue(Type type)
