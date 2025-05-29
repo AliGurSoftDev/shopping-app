@@ -1,5 +1,4 @@
 using AutoMapper;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 public class MappingProfile : Profile
 {
