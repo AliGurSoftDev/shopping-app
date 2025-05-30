@@ -11,6 +11,7 @@ import ProductsPage from "./pages/ProductsPage";
 import CategoriesPage from "./pages/CategoriesPage.jsx";
 import CategoryPage from "./pages/CategoryPage.jsx";
 import CartPage from './pages/CartPage.jsx';
+import WishlistPage from "./pages/WishlistPage.jsx";
 
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/category/:categoryId" element={<CategoryPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
       </Routes>
     </Router>
   );

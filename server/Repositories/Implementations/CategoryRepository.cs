@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 
 public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
@@ -8,4 +9,13 @@ public class CategoryRepository : GenericRepository<Category>, ICategoryReposito
     {
         _context = context;
     }
+
+    public async Task<IEnumerable<Category>> GetFeaturedCategoriesAsync(int categoryCount = 4)
+    {
+        return await _context.Categories
+        .Where(c => c.IsFeatured == 1)
+        .Take(categoryCount)
+        .ToListAsync();
+    }
+
 }

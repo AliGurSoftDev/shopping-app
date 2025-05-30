@@ -43,6 +43,14 @@ public class ProductController : ControllerBase
         return Ok(productDtos);
     }
 
+    [HttpGet("featured")]
+    public async Task<IActionResult> GetFeaturedProductsAsync()
+    {
+        var featuredProducts = await _unitOfWork.Products.GetFeaturedProductsAsync();
+        var featuredProductDtos = _mapper.Map<IEnumerable<Product>>(featuredProducts);
+        return Ok(featuredProductDtos);
+    }
+
     // Create a new product
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] ProductDto productDto)

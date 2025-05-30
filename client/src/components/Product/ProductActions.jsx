@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../features/cart/cartSlice';
+import { addToWishlist } from '../../features/wishlist/wishlistSlice';
 
 const ProductActions = ({ productId, stock, userId }) => {
   const [quantity, setQuantity] = useState(1);
@@ -18,6 +19,10 @@ const ProductActions = ({ productId, stock, userId }) => {
     dispatch(addToCart({ userId, productId, quantity }));
   };
 
+  const handleAddToWishlist = () => {
+    dispatch(addToWishlist({ userId, productId, quantity }));
+  };
+
   return (
     <div className="p-2 space-y-2">
       <div className="flex items-center space-x-2">
@@ -29,7 +34,7 @@ const ProductActions = ({ productId, stock, userId }) => {
         <button onClick={handleAddToCart} className="px-4 py-2 bg-blue-600 text-white rounded-lg focus:!outline-none active:bg-blue-300 transition-colors duration-100">
           Add {quantity} to Cart
         </button>
-        <button className="px-4 py-2 bg-gray-300 text-black rounded-lg">
+        <button onClick={handleAddToWishlist} className="px-4 py-2 bg-gray-300 text-black rounded-lg">
           Add to Wishlist
         </button>
       </div>

@@ -96,7 +96,7 @@ public class OrderController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var cart = await _unitOfWork.Carts.GetCartByUserId(userId);
+        var cart = await _unitOfWork.Carts.GetCartByUserId(userId, 0);
         if (cart == null || cart.Items == null || !cart.Items.Any())
             return NotFound("No items found in the cart.");
 

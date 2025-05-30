@@ -35,6 +35,15 @@ public class CategoryController : ControllerBase
         return Ok(categoryDto);
     }
 
+    //Get featured categories
+    [HttpGet("featured")]
+    public async Task<IActionResult> GetFeaturedCategoriesAsync()
+    {
+        var featuredCategories = await _unitOfWork.Categories.GetFeaturedCategoriesAsync();
+        var featuredCategoryDtos = _mapper.Map<IEnumerable<Category>>(featuredCategories);
+        return Ok(featuredCategoryDtos);
+    }
+
     // Create a new category
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CategoryDto categoryDto)
