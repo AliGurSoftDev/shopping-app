@@ -40,7 +40,7 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> GetFeaturedCategoriesAsync()
     {
         var featuredCategories = await _unitOfWork.Categories.GetFeaturedCategoriesAsync();
-        var featuredCategoryDtos = _mapper.Map<IEnumerable<Category>>(featuredCategories);
+        var featuredCategoryDtos = _mapper.Map<IEnumerable<CategoryDto>>(featuredCategories);
         return Ok(featuredCategoryDtos);
     }
 

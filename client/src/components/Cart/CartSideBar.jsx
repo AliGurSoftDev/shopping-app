@@ -36,7 +36,7 @@ const CartSideBar = ({ userId }) => {
           ◀
         </button>
         
-        <div className={`transform -rotate-90 -translate-x-1/2 ${isOpen ? "invisible" : "visible"}`}>
+        <div className={`transform -rotate-90 -translate-x-1/2 ${isOpen ? "invisible" : "visible"} bg-gradient-to-l from-violet-600 to-violet-300 pb-4 ml-1.5`}>
             {status === "loading" ? (
               <span className="text-xl text-white">Loading...</span>
             ) : cart ? (

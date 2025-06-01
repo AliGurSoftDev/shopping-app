@@ -47,7 +47,7 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> GetFeaturedProductsAsync()
     {
         var featuredProducts = await _unitOfWork.Products.GetFeaturedProductsAsync();
-        var featuredProductDtos = _mapper.Map<IEnumerable<Product>>(featuredProducts);
+        var featuredProductDtos = _mapper.Map<IEnumerable<ProductDto>>(featuredProducts);
         return Ok(featuredProductDtos);
     }
 
