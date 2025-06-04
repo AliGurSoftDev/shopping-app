@@ -13,14 +13,15 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         return await _context.Products
             .Where(p => p.CategoryId == categoryId)
+            .OrderBy(p => p.Id)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Product>> GetFeaturedProductsAsync(int productCount = 4)
+    public async Task<IEnumerable<Product>> GetFeaturedProductsAsync()
     {
         return await _context.Products
             .Where(p => p.IsFeatured == 1)
-            .Take(productCount)
+            .OrderBy(p => p.Id)
             .ToListAsync();
     }
 }

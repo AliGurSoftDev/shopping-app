@@ -43,7 +43,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
             await _context.SaveChangesAsync();
         }
 
-        var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+        var existingItem = cart.Items?.FirstOrDefault(i => i.ProductId == productId);
 
         if (existingItem != null)
         {

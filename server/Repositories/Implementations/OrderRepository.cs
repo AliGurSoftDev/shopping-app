@@ -15,6 +15,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
         .Include(o => o.Items)
         .ThenInclude(i => i.Product)
         .Where(o => o.UserId == userId)
+        .OrderBy(o => o.OrderDate)
         .ToListAsync();
     }
     public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status)
@@ -23,6 +24,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
         .Include(o => o.Items)
         .ThenInclude(i => i.Product)
         .Where(o => o.Status == getOrderStatusEnum(status))
+        .OrderBy(o => o.OrderDate)
         .ToListAsync();
     }
     public async Task<IEnumerable<Order>> GetOrdersByUserIdAndStatusAsync(int userId, string status)
@@ -31,6 +33,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
         .Include(o => o.Items)
         .ThenInclude(i => i.Product)
         .Where(o => o.UserId == userId && o.Status == getOrderStatusEnum(status))
+        .OrderBy(o => o.OrderDate)
         .ToListAsync();
     }
     public override async Task<Order?> GetByIdAsync(int id)

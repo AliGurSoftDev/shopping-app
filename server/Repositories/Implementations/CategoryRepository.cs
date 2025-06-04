@@ -15,6 +15,7 @@ public class CategoryRepository : GenericRepository<Category>, ICategoryReposito
         return await _context.Categories
         .Where(c => c.IsFeatured == 1)
         .Take(categoryCount)
+        .OrderBy(c => c.Id)
         .ToListAsync();
     }
 

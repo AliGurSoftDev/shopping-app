@@ -42,10 +42,9 @@ const Homepage = () => {
         </h1>
         <p className="text-lg">Explore featured categories and top deals</p>
       </section>
-
       {/* Featured Categories */}
-      <section className="px-6 md:px-16 lg:px-32 py-10 bg-gradient-to-t from-white to-blue-400">
-        <h2 className="text-2xl font-bold mb-6  text-white">
+      <section className="px-6 md:px-16 lg:px-32 py-10">
+        <h2 className="text-2xl font-bold mb-6  text-violet-600">
           Featured Categories
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
@@ -56,7 +55,7 @@ const Homepage = () => {
       </section>
 
       {/* Featured Products */}
-      <section className="px-6 md:px-16 lg:px-32 py-10 bg-gradient-to-b from-white to-blue-50">
+      <section className="px-6 md:px-16 lg:px-32 py-10">
         <h2 className="text-2xl font-bold mb-6 text-violet-600">
           Featured Products
         </h2>

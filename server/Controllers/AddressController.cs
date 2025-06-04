@@ -60,10 +60,10 @@ public class AddressController : ControllerBase
     }
 
     //Get cities by CountryId
-    [HttpGet("cities/{countryId}")]
-    public async Task<IActionResult> GetCitiesByCountryIdAsync(int countryId)
+    [HttpGet("cities")]
+    public async Task<IActionResult> GetCitiesByCountryIdAsync()
     {
-        var cities = await _unitOfWork.Addresses.GetCitiesByCountryIdAsync(countryId);
+        var cities = await _unitOfWork.Addresses.GetCitiesByCountryIdAsync();
         var cityDtos = _mapper.Map<IEnumerable<CityDto>>(cities);
         return Ok(cityDtos);
     }
@@ -78,6 +78,9 @@ public class AddressController : ControllerBase
         var address = _mapper.Map<Address>(addressDto);
         await _unitOfWork.Addresses.AddAsync(address);
         await _unitOfWork.SaveChangesAsync();
+
+        if (address.IsDefault == 1)
+            await SetDefaultAddress(address.Id);
 
         var newAddressDto = _mapper.Map<AddressDto>(address);
         return CreatedAtAction(nameof(GetById), new { id = newAddressDto.Id }, newAddressDto);
@@ -136,6 +139,9 @@ public class AddressController : ControllerBase
         var address = await _unitOfWork.Addresses.GetByIdAsync(id);
         if (address == null)
             return NotFound();
+
+        if (address.IsDefault == 1)
+            return BadRequest(new { message = "Unable to remove default address" });
 
         _unitOfWork.Addresses.Delete(address);
         await _unitOfWork.SaveChangesAsync();

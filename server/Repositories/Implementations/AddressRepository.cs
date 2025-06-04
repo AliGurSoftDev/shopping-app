@@ -14,6 +14,7 @@ public class AddressRepository : GenericRepository<Address>, IAddressRepository
     {
         return await _context.Addresses
             .Where(a => a.UserId == userId)
+            .OrderBy(a => a.Id)
             .ToListAsync();
     }
 
@@ -26,13 +27,15 @@ public class AddressRepository : GenericRepository<Address>, IAddressRepository
 
     public async Task<IEnumerable<Country>> GetCountriesAsync()
     {
-        return await _context.Countries.ToListAsync();
+        return await _context.Countries
+            .OrderBy(c => c.CountryName)
+            .ToListAsync();
     }
 
-    public async Task<IEnumerable<City?>> GetCitiesByCountryIdAsync(int countryId)
+    public async Task<IEnumerable<City?>> GetCitiesByCountryIdAsync()
     {
         return await _context.Cities
-            .Where(c => c.CountryId == countryId)
+            .OrderBy(c => c.CityName)
             .ToListAsync();
     }
 }

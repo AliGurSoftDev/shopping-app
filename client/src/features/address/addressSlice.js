@@ -9,16 +9,11 @@ export const fetchCountries = createAsyncThunk(
   }
 );
 
-export const fetchCities = createAsyncThunk(
-  "address/fetchCities",
-  async (countryId) => {
-    const res = await fetch(
-      `http://localhost:5078/api/address/cities/${countryId}`
-    );
-    const data = await res.json();
-    return data;
-  }
-);
+export const fetchCities = createAsyncThunk("address/fetchCities", async () => {
+  const res = await fetch(`http://localhost:5078/api/address/cities`);
+  const data = await res.json();
+  return data;
+});
 
 export const fetchAddresses = createAsyncThunk(
   "address/fetchAddresses",
@@ -76,15 +71,15 @@ export const addNewAddress = createAsyncThunk(
 
 export const setDefault = createAsyncThunk(
   "address/setDefault",
-  async (userId, thunkAPI) => {
+  async ({ userId, addressId }, thunkAPI) => {
     const res = await fetch(
-      `http://localhost:5078/api/address/${userId}/setdefault`,
+      `http://localhost:5078/api/address/${addressId}/setdefault`,
       {
         method: "PUT",
       }
     );
     if (!res.ok) throw new Error("Failed to set address default");
-    return thunkAPI.dispatch(fetchDefaultAddress(userId)); // Refresh default address after adding
+    return thunkAPI.dispatch(fetchAddresses(userId)); // Refresh default address after adding
   }
 );
 
@@ -94,7 +89,12 @@ export const removeAddress = createAsyncThunk(
     const res = await fetch(`http://localhost:5078/api/address/${addressId}`, {
       method: "DELETE",
     });
-    if (!res.ok) throw new Error("Failed to remove the address");
+    if (!res.ok) {
+      const errorData = await res.json();
+      return thunkAPI.rejectWithValue(
+        errorData.message || "Failed to remove address"
+      );
+    }
     return thunkAPI.dispatch(fetchAddresses(userId));
   }
 );
