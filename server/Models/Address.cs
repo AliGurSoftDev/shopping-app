@@ -7,7 +7,8 @@ public class Address
     public AddressType AddressType { get; set; }
     public int PostCode { get; set; }
     public string AddressDetails { get; set; } = string.Empty;
-    public int IsDefault { get; set; }
+    public string IsDefault { get; set; } = string.Empty;
+    public string IsRemoved { get; set; } = GlobalConstants.No;
 
     // Navigation property for line items
     public int UserId { get; set; }

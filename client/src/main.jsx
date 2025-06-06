@@ -15,6 +15,7 @@ import CategoryPage from "./pages/CategoryPage.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import WishlistPage from "./pages/WishlistPage.jsx";
 import AddressPage from "./pages/AddressPage.jsx";
+import OrderPage from "./pages/OrderPage.jsx";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/address" element={<AddressPage />} />
+          <Route path="/orders" element={<OrderPage />} />
         </Routes>
       </Router>
       <ToastContainer position="bottom-right" autoClose={3000} />

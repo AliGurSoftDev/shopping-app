@@ -4,8 +4,8 @@ import {
   fetchWishlist,
   removeFromWishlist,
   emptyWishlist,
-} from "../features/wishlist/wishlistSlice";
-import { addToCart } from "../features/cart/cartSlice";
+} from "../features/wishlistSlice";
+import { addToCart } from "../features/cartSlice";
 import WishlistItemCard from "../components/wishlist/WishlistItemCard";
 import MenuBar from "../components/menu/MenuBar";
 import CartSideBar from "../components/cart/CartSideBar";

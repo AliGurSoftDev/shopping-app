@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCart, emptyCart } from "../../features/cart/cartSlice";
+import { fetchCart, emptyCart } from "../../features/cartSlice";
 import { useAnimatedNumber } from "../../hooks/useAnimatedNumber";
 
 const CartSideBar = ({ userId }) => {

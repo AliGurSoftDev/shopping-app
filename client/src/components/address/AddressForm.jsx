@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  addNewAddress,
-  fetchCities,
-} from "../../features/address/addressSlice";
-import CountrySelect from "./CountrySelect";
-import CitySelect from "./CitySelect";
+import { addNewAddress } from "../../features/addressSlice";
 import CountryCitySelector from "./CountryCitySelector";
+import { toast } from "react-toastify";
 
-const AddressForm = ({ userId }) => {
+const AddressForm = ({ userId, toggleForm }) => {
   const dispatch = useDispatch();
   const [formData, setForm] = useState({
     addressName: "",
@@ -28,11 +24,34 @@ const AddressForm = ({ userId }) => {
     }));
   };
 
-  
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addNewAddress({ ...formData, userId, postCode: Number(formData.postCode), addressType: Number(formData.addressType), isDefault: (formData.isDefault) ? 1 : 0 }));
+    dispatch(
+      addNewAddress({
+        ...formData,
+        userId,
+        postCode: Number(formData.postCode),
+        addressType: Number(formData.addressType),
+        isDefault: formData.isDefault ? 1 : 0,
+      })
+    );
+    if (toggleForm) toggleForm();
+    toast.success("Address added.");
+  };
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    setForm({
+      addressName: "",
+      addressType: 0,
+      countryId: "",
+      cityId: "",
+      postCode: "",
+      addressDetails: "",
+      isDefault: false,
+    });
+
+    if (toggleForm) toggleForm();
   };
 
   return (
@@ -55,7 +74,11 @@ const AddressForm = ({ userId }) => {
         <option value={1}>Work</option>
       </select>
 
-      <CountryCitySelector countryId={formData.countryId} cityId={formData.cityId} onChange={handleChange} />
+      <CountryCitySelector
+        countryId={formData.countryId}
+        cityId={formData.cityId}
+        onChange={handleChange}
+      />
 
       <input
         className="border p-2 w-full"
@@ -83,12 +106,20 @@ const AddressForm = ({ userId }) => {
         />{" "}
         Set as default
       </label>
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        Add Address
-      </button>
+      <div className="justify-self-end">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 mr-2 rounded  hover:bg-blue-400 hover:border-red-60"
+        >
+          Add Address
+        </button>
+        <button
+          onClick={handleCancel}
+          className="px-4 py-2 rounded text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-red-600"
+        >
+          cancel
+        </button>
+      </div>
     </form>
   );
 };

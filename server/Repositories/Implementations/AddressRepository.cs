@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShoppingProject.Common;
 
 public class AddressRepository : GenericRepository<Address>, IAddressRepository
 {
@@ -17,12 +18,20 @@ public class AddressRepository : GenericRepository<Address>, IAddressRepository
             .OrderBy(a => a.Id)
             .ToListAsync();
     }
+    public async Task<IEnumerable<Address?>> GetActiveAddressesByUserIdAsync(int userId)
+    {
+        return await _context.Addresses
+            .Where(a => a.UserId == userId)
+            .Where(a => a.IsRemoved == GlobalConstants.No)
+            .OrderBy(a => a.Id)
+            .ToListAsync();
+    }
 
     public async Task<Address?> GetDefaultAddressByUserIdAsync(int userId)
     {
         return await _context.Addresses
             .Where(a => a.UserId == userId)
-            .FirstOrDefaultAsync(a => a.IsDefault == 1);
+            .FirstOrDefaultAsync(a => a.IsDefault == GlobalConstants.Yes);
     }
 
     public async Task<IEnumerable<Country>> GetCountriesAsync()

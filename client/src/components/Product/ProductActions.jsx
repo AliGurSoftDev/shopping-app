@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addToCart } from '../../features/cart/cartSlice';
-import { addToWishlist } from '../../features/wishlist/wishlistSlice';
+import { addToCart } from '../../features/cartSlice';
+import { addToWishlist } from '../../features/wishlistSlice';
 
 const ProductActions = ({ productId, stock, userId }) => {
   const [quantity, setQuantity] = useState(1);

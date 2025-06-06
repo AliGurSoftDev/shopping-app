@@ -143,6 +143,20 @@ public class OrderController : ControllerBase
         return NoContent();
     }
 
+    //Cancel an order
+    [HttpDelete("{id}/cancel")]
+    public async Task<IActionResult> CancelOrderAsync(int id)
+    {
+        var order = await _unitOfWork.Orders.GetByIdAsync(id);
+        if (order == null)
+            return NotFound();
+
+        order.Status = OrderStatus.Cancelled;
+        await _unitOfWork.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     // Delete an order
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)

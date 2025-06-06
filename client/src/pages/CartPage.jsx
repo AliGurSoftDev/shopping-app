@@ -7,7 +7,7 @@ import {
   fetchCart,
   removeFromCart,
   emptyCart,
-} from "../features/cart/cartSlice";
+} from "../features/cartSlice";
 import { useAnimatedNumber } from "../hooks/useAnimatedNumber";
 
 const CartPage = () => {

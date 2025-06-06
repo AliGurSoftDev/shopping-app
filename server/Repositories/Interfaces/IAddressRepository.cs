@@ -4,4 +4,5 @@ public interface IAddressRepository : IGenericRepository<Address>
     Task<Address?> GetDefaultAddressByUserIdAsync(int userId);
     Task<IEnumerable<Country>> GetCountriesAsync();
     Task<IEnumerable<City?>> GetCitiesByCountryIdAsync();
+    Task<IEnumerable<Address?>> GetActiveAddressesByUserIdAsync(int userId);
 }

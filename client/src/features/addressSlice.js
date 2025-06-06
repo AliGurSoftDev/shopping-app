@@ -18,6 +18,15 @@ export const fetchCities = createAsyncThunk("address/fetchCities", async () => {
 export const fetchAddresses = createAsyncThunk(
   "address/fetchAddresses",
   async (userId) => {
+    const res = await fetch(`http://localhost:5078/api/address/${userId}/getactive`);
+    const data = res.json();
+    return data;
+  }
+);
+
+export const fetchAllAddresses = createAsyncThunk(
+  "address/fetchActiveAddresses",
+  async (userId) => {
     const res = await fetch(`http://localhost:5078/api/address/${userId}/get`);
     const data = res.json();
     return data;
@@ -30,6 +39,15 @@ export const fetchDefaultAddress = createAsyncThunk(
     const res = await fetch(
       `http://localhost:5078/api/address/${userId}/getdefault`
     );
+    const data = res.json();
+    return data;
+  }
+);
+
+export const fetchAddressById = createAsyncThunk(
+  "address/fetchAddresses",
+  async (id) => {
+    const res = await fetch(`http://localhost:5078/api/address/${id}`);
     const data = res.json();
     return data;
   }
@@ -61,7 +79,7 @@ export const addNewAddress = createAsyncThunk(
         cityId,
         postCode,
         addressDetails,
-        isDefault,
+        isDefault:(isDefault == 1) ? "Y" : "N" 
       }),
     });
     if (!response.ok) throw new Error("Failed to add the address");
@@ -86,7 +104,7 @@ export const setDefault = createAsyncThunk(
 export const removeAddress = createAsyncThunk(
   "address/removeAddress",
   async ({ userId, addressId }, thunkAPI) => {
-    const res = await fetch(`http://localhost:5078/api/address/${addressId}`, {
+    const res = await fetch(`http://localhost:5078/api/address/${addressId}/remove`, {
       method: "DELETE",
     });
     if (!res.ok) {
@@ -149,6 +167,19 @@ const addressSlice = createSlice({
         state.addresses = action.payload;
       })
       .addCase(fetchAddresses.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+
+      // Fetch addresses
+      .addCase(fetchAllAddresses.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllAddresses.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.allAddresses = action.payload;
+      })
+      .addCase(fetchAllAddresses.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
