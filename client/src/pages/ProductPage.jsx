@@ -72,7 +72,7 @@ const ProductPage = () => {
       <div className="grid grid-rows-2">
               <div className='p-8 text-xl text-center font-sans font-semibold text-violet-500 row-start-1 row-end-4'><h1>{product.name}</h1></div>
 
-        <div className='h-96 w-96'><ProductImageGallery productId={product.id} /></div>
+        <div className='h-96 w-96'><ProductImageGallery imageUrls={product.imageUrls} /></div>
 
         </div>
 

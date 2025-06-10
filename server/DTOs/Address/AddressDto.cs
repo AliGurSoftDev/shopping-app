@@ -5,7 +5,7 @@ public class AddressDto
     public int Id { get; set; }
     public int UserId { get; set; }
     public string AddressName { get; set; } = string.Empty;
-    public AddressType AddressType { get; set; }
+    public string AddressType { get; set; } = string.Empty;
     public int CountryId { get; set; }
     public int CityId { get; set; }
     public int PostCode { get; set; }

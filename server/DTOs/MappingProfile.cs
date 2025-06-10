@@ -12,9 +12,11 @@ public class MappingProfile : Profile
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null && !srcMember.Equals(GetDefaultValue(srcMember.GetType()))));
 
         // Product
-        CreateMap<Product, ProductDto>();
+        CreateMap<Product, ProductDto>().ForMember(dest => dest.ImageUrls, opts => opts.MapFrom(src => src.ImageUrls));
         CreateMap<ProductDto, Product>().ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null && !srcMember.Equals(GetDefaultValue(srcMember.GetType()))));
+
+        CreateMap<ProductImage, ProductImageDto>();
 
         // Category
         CreateMap<Category, CategoryDto>();

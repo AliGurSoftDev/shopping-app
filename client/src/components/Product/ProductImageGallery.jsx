@@ -1,94 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
 
-const ProductImageGallery = ({ productId, imageSize = 96 }) => {
-  const [imageCount, setImageCount] = useState(0);
-  const [currentImage, setCurrentImage] = useState(1);
+const ProductImageGallery = ({ imageUrls = [], imageSize = 96 }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(false);
 
-  // Arrow click handlers
+  if (!imageUrls || imageUrls.length === 0) {
+    return (
+      <div className={`relative h-${imageSize} w-${imageSize} flex items-center justify-center bg-gray-200 rounded-2xl`}>
+        <img
+          src={`/images/placeholder.jpg`}
+          alt="No image"
+          className="w-full h-full object-cover rounded-2xl"
+        />
+      </div>
+    );
+  }
+
+  // Ensure images are sorted by displayOrder
+  const sortedImages = [...imageUrls].sort((a, b) => a.displayOrder - b.displayOrder);
+
   const handlePrev = () => {
     setFade(true);
     setTimeout(() => {
-    setCurrentImage((prev) => (prev === 1 ? imageCount : prev - 1));
-    setFade(false);
+      setCurrentIndex((prev) => (prev === 0 ? sortedImages.length - 1 : prev - 1));
+      setFade(false);
     }, 300);
   };
 
   const handleNext = () => {
     setFade(true);
     setTimeout(() => {
-    setCurrentImage((prev) => (prev === imageCount ? 1 : prev + 1));
-    setFade(false);
+      setCurrentIndex((prev) => (prev === sortedImages.length - 1 ? 0 : prev + 1));
+      setFade(false);
     }, 300);
   };
 
-  // Fetch image count dynamically
-  useEffect(() => {
-    const fetchImageCount = async () => {
-      let count = 0;
-      const maxAttempts = 50; // To prevent infinite loop
-
-      for (let i = 1; i <= maxAttempts; i++) {
-        try {
-          const response = await fetch(`/images/products/${productId}/${i}.jpg`, { method: 'HEAD' });
-          if (response.ok) {
-            // Check if the response is a valid image by loading it temporarily
-            const img = new Image();
-            img.src = `/images/products/${productId}/${i}.jpg`;
-            await new Promise((resolve) => {
-              img.onload = () => resolve(true);
-              img.onerror = () => resolve(false);
-            });
-
-            if (img.complete && img.naturalWidth > 0) {
-              count++;
-            } else {
-              break;
-            }
-          } else {
-            break;
-          }
-        } catch (error) {
-          console.error("Error fetching image:", error);
-          break;
-        }
-      }
-
-      setImageCount(count);
-    };
-
-    fetchImageCount();
-  }, [productId]);
-
   return (
     <div className={`relative h-${imageSize} w-${imageSize}`}>
-      {imageCount ? (
-        <>
-          <img
-            src={`/images/products/${productId}/${currentImage}.jpg`}
-            alt={`Product ${productId} - Image ${currentImage}`}
-            className={`w-full h-full object-cover rounded-2xl transition-opacity duration-300 ${fade ? 'opacity-0' : 'opacity-100'}`}
-          />
+      <img
+        src={sortedImages[currentIndex].imageUrl}
+        alt={`Product Image ${currentIndex + 1}`}
+        className={`w-full h-full object-cover rounded-2xl transition-opacity duration-300 ${fade ? 'opacity-0' : 'opacity-100'}`}
+      />
 
-          {/* Navigation Arrows */}
+      {/* Navigation Arrows */}
+      {sortedImages.length > 1 && (
+        <>
           <button
             onClick={handlePrev}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 focus:outline-none bg-white opacity-60 hover:opacity-85 !border-transparent p-2 rounded-xl shadow-md"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 focus:outline-none bg-white opacity-60 hover:opacity-85 border-none p-2 rounded-xl shadow-md"
           >
             ◀
           </button>
           <button
             onClick={handleNext}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 focus:outline-none bg-white opacity-60 hover:opacity-85 !border-transparent p-2 rounded-xl shadow-md"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 focus:outline-none bg-white opacity-60 hover:opacity-85 border-none p-2 rounded-xl shadow-md"
           >
             ▶
           </button>
         </>
-      ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-2xl">
-          {imageCount === 0 ? <img src={`/images/placeholder.jpg`} className={`w-full h-full object-cover rounded-2xl`}/> : "Loading..."}
-        </div>
       )}
     </div>
   );

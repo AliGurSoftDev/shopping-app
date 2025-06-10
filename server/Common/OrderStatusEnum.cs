@@ -1,6 +1,6 @@
 namespace ShoppingProject.Common
 {
-    public enum OrderStatus
+    public enum OrderStatusEnum
     {
         Pending,
         Processing,

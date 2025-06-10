@@ -61,7 +61,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
         var order = new Order
         {
             UserId = cart.UserId,
-            Status = OrderStatus.Pending,
+            Status = OrderStatusEnum.Pending,
             OrderDate = DateTime.UtcNow,
             Items = cart.Items
         };
@@ -87,9 +87,9 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 
     public async Task UpdateOrderStatus(int id, string status)
     {
-        OrderStatus newStatus;
+        OrderStatusEnum newStatus;
 
-        if (Enum.TryParse<OrderStatus>(status, true, out newStatus))
+        if (Enum.TryParse<OrderStatusEnum>(status, true, out newStatus))
         {
             var existingOrder = await GetByIdAsync(id);
             if (existingOrder != null)
@@ -99,12 +99,12 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
         }
     }
 
-    private OrderStatus getOrderStatusEnum(string status)
+    private OrderStatusEnum getOrderStatusEnum(string status)
     {
-        OrderStatus statusEnum;
-        if (Enum.TryParse<OrderStatus>(status, true, out statusEnum))
+        OrderStatusEnum statusEnum;
+        if (Enum.TryParse<OrderStatusEnum>(status, true, out statusEnum))
             return statusEnum;
-        return OrderStatus.Failed;
+        return OrderStatusEnum.Failed;
     }
 
 }

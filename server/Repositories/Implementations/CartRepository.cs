@@ -95,7 +95,6 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
         if (cart == null) return false;
 
         _context.LineItems.RemoveRange(cart.Items);
-        //_context.Carts.Remove(cart);
 
         return true;
     }

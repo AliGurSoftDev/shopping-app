@@ -7,9 +7,9 @@ public class Product
     public int Stock { get; set; }
     public int CategoryId { get; set; }
     public int IsFeatured { get; set; }
-    public string ImageUrl { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Navigation Property
     public Category? Category { get; set; }
+    public List<ProductImage>? ImageUrls { get; set; }
 }

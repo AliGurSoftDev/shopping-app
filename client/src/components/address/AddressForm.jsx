@@ -8,7 +8,7 @@ const AddressForm = ({ userId, toggleForm }) => {
   const dispatch = useDispatch();
   const [formData, setForm] = useState({
     addressName: "",
-    addressType: 0,
+    addressType: "",
     countryId: "",
     cityId: "",
     postCode: "",
@@ -26,12 +26,13 @@ const AddressForm = ({ userId, toggleForm }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    alert(formData.addressType)
     dispatch(
       addNewAddress({
         ...formData,
         userId,
         postCode: Number(formData.postCode),
-        addressType: Number(formData.addressType),
+        addressType: formData.addressType,
         isDefault: formData.isDefault ? 1 : 0,
       })
     );
@@ -43,7 +44,7 @@ const AddressForm = ({ userId, toggleForm }) => {
     e.preventDefault();
     setForm({
       addressName: "",
-      addressType: 0,
+      addressType: "",
       countryId: "",
       cityId: "",
       postCode: "",

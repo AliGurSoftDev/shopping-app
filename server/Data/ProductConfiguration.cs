@@ -8,5 +8,9 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasOne(p => p.Category)
                .WithMany(c => c.Products)
                .HasForeignKey(p => p.CategoryId);
+               
+        builder.HasMany(p => p.ImageUrls)
+                .WithOne(i => i.Product)
+                .HasForeignKey(i => i.ProductId);
     }
 }

@@ -4,7 +4,7 @@ public class Address
 {
     public int Id { get; set; }
     public string AddressName { get; set; } = string.Empty;
-    public AddressType AddressType { get; set; }
+    public AddressTypeEnum AddressType { get; set; }
     public int PostCode { get; set; }
     public string AddressDetails { get; set; } = string.Empty;
     public string IsDefault { get; set; } = string.Empty;

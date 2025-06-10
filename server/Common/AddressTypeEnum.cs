@@ -1,6 +1,6 @@
 namespace ShoppingProject.Common
 {
-    public enum AddressType
+    public enum AddressTypeEnum
     {
         Home,
         Business,

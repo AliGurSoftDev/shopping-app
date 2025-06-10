@@ -151,7 +151,7 @@ public class OrderController : ControllerBase
         if (order == null)
             return NotFound();
 
-        order.Status = OrderStatus.Cancelled;
+        order.Status = OrderStatusEnum.Cancelled;
         await _unitOfWork.SaveChangesAsync();
 
         return NoContent();
