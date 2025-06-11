@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import MenuBar from "../components/Menu/MenuBar";
-import CartSideBar from "../components/Cart/CartSideBar";
+import MenuBar from "../components/menu/MenuBar";
+import CartSideBar from "../components/cart/CartSideBar";
 import ProductCard from "../components/Product/ProductCard";
 import Breadcrumb from "../components/ui/BreadCrumb";
 
