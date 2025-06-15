@@ -1,50 +1,49 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:5078/api/order";
+const getAuthHeader = () => ({
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+});
 
 export const fetchOrders = createAsyncThunk(
   "order/fetchOrders",
-  async (userId) => {
-    const res = await fetch(`http://localhost:5078/api/order/${userId}/get`);
-    const data = await res.json();
-    return data;
+  async () => {
+    const response = await axios.get(`${BASE_URL}/get`, getAuthHeader());
+    return response.data;
   }
 );
 
 export const cancelOrder = createAsyncThunk(
   "order/cancelOrder",
-  async ({ userId, orderId }, thunkAPI) => {
-    const res = await fetch(
-      `http://localhost:5078/api/order/${orderId}/cancel`,
-      {
-        method: "DELETE",
-      }
+  async ({ orderId }, thunkAPI) => {
+    const response = await axios.delete(
+      `${BASE_URL}${orderId}/cancel`,
+      getAuthHeader()
     );
-    if (!res.ok) {
-      const errorData = await res.json();
+    if (!response.ok) {
       return thunkAPI.rejectWithValue(
-        errorData.message || "Failed to cancel the order"
+        response.errorData.message || "Failed to cancel the order"
       );
     }
-    return thunkAPI.dispatch(fetchOrders(userId));
+    return thunkAPI.dispatch(fetchOrders());
   }
 );
 
 export const createOrder = createAsyncThunk(
   "order/createOrder",
-  async ({ userId }, thunkAPI) => {
-    const res = await fetch(
-      `http://localhost:5078/api/order/${userId}/placeOrder`,
-      {
-        method: "POST",
-      }
+  async ( thunkAPI) => {
+    const response = await axios.post(
+      `${BASE_URL}/placeOrder`,
+      getAuthHeader()
     );
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.log(errorData.message)
+    if (!response.ok) {
+      console.log(response.errorData.message)
       return thunkAPI.rejectWithValue(
-        errorData.message || "Failed to create order."
+        response.errorData.message || "Failed to create order."
       );
     }
-    return thunkAPI.dispatch(fetchOrders(userId));
+    return thunkAPI.dispatch(fetchOrders());
   }
 );
 

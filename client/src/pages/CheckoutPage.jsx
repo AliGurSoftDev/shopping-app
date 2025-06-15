@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import MenuBar from "../components/menu/MenuBar.jsx";
 import CheckoutItemCard from "../components/cart/CheckoutItemCard.jsx";
 import { toast } from "react-toastify";
+import { useAnimatedNumber } from "../hooks/useAnimatedNumber";
 
 const CheckoutPage = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const CheckoutPage = () => {
 
   const handleCheckout = async () => {
     try {
-      const resultAction = await dispatch(createOrder({userId}));
+      const resultAction = await dispatch(createOrder({ userId }));
       if (createOrder.fulfilled.match(resultAction)) {
         toast.success("Order created successfully!");
         navigate("/orders");
@@ -37,8 +38,10 @@ const CheckoutPage = () => {
   };
 
   const handleAddressChange = () => {
-    navigate("/address", { state: { prevPage:"checkout" } });
+    navigate("/address", { state: { prevPage: "checkout" } });
   };
+
+  const animatedTotal = useAnimatedNumber(cart?.totalPrice ?? 0, 500);
 
   if (loading || !cart) return <p>Loading...</p>;
   return (
@@ -58,7 +61,7 @@ const CheckoutPage = () => {
             </div>
 
             <p className="text-xl text-end font-semibold mb-4">
-              Total: ${cart.totalPrice.toFixed(2)}
+              Total: ${animatedTotal.toFixed(2)}
             </p>
 
             <h1 className=" text-2xl font-semibold mt-8 ">Delivery Address</h1>

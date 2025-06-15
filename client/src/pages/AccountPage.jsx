@@ -1,18 +1,17 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../features/userSlice";
+import { getUser } from "../features/authSlice";
 import MenuBar from "../components/menu/MenuBar";
 
 const AccountPage = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user);
-  const loading = useSelector((state) => state.user.loading);
-  const userId = 1;
+  const user = useSelector((state) => state.auth.user);
+  const status = useSelector((state) => state.auth.status);
 
   useEffect(() => {
-    dispatch(fetchUser(userId));
-  }, [dispatch, userId]);
+    dispatch(getUser());
+  }, [dispatch]);
 
   const sections = [
     { title: "My Orders", path: "/orders" },
@@ -20,14 +19,13 @@ const AccountPage = () => {
     { title: "Addresses", path: "/address", state:{prevPage: "account"} },
     { title: "Logout", path: "/logout" },
   ];
-
-  if (loading) {
+  if (status === "loading") {
     return <p>Loading...</p>;
   }
   return (
     <>
       <MenuBar />
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      {user && <div className="max-w-4xl mx-auto px-6 py-8">
         <h1 className="text-3xl font-bold mb-6">My Account</h1>
 
         <div className="bg-white shadow rounded-lg p-6 mb-6">
@@ -57,7 +55,7 @@ const AccountPage = () => {
             </Link>
           ))}
         </div>
-      </div>
+      </div>}
     </>
   );
 };

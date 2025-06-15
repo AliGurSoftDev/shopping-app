@@ -2,10 +2,10 @@ import { configureStore } from '@reduxjs/toolkit';
 import cartReducer from '../features/cartSlice';
 import wishlistReducer from '../features/wishlistSlice';
 import addressReducer from '../features/addressSlice';
-import orderReducer from '../features/orderSlice'
-import productReducer from '../features/productSlice'
-import categoryReducer from '../features/categorySlice'
-import userReducer from '../features/userSlice'
+import orderReducer from '../features/orderSlice';
+import productReducer from '../features/productSlice';
+import categoryReducer from '../features/categorySlice';
+import authReducer from '../features/authSlice';
 
 const store = configureStore({
   reducer: {
@@ -15,7 +15,7 @@ const store = configureStore({
     order: orderReducer,
     product: productReducer,
     category: categoryReducer,
-    user: userReducer
+    auth: authReducer,
   },
 });
 

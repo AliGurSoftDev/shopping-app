@@ -1,51 +1,47 @@
 // src/features/cart/cartSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:5078/api/cart";
+const getAuthHeader = () => ({
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+});
 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ userId, productId, quantity }, thunkAPI) => {
-    const response = await fetch(
-      `http://localhost:5078/api/cart/${userId}/add`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity }),
-      }
+  async ({ productId, quantity }, thunkAPI) => {
+    await axios.post(
+      `${BASE_URL}/add`,
+      { productId, quantity },
+      getAuthHeader()
     );
-    if (!response.ok) throw new Error("Failed to add to cart");
-    return thunkAPI.dispatch(fetchCart(userId)); // Refresh cart after adding
+    return thunkAPI.dispatch(fetchCart());
   }
 );
 
-export const fetchCart = createAsyncThunk("cart/fetchCart", async (userId) => {
-  const res = await fetch(`http://localhost:5078/api/cart/${userId}/get`);
-  const data = await res.json();
-  return data;
+export const fetchCart = createAsyncThunk("cart/fetchCart", async () => {
+  const response = await axios.get(`${BASE_URL}/get`, getAuthHeader());
+  return response.data;
 });
 
-export const emptyCart = createAsyncThunk("cart/emptyCart", async (userId) => {
-  await fetch(`http://localhost:5078/api/cart/${userId}/emptyCart`, {
-    method: "DELETE",
-  });
-  return userId;
+export const emptyCart = createAsyncThunk("cart/emptyCart", async () => {
+  await axios.delete(`${BASE_URL}/emptyCart`, getAuthHeader());
+  return;
 });
 
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async ({ userId, productId, quantity }) => {
-    const response = await fetch(
-      `http://localhost:5078/api/cart/${userId}/remove`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity }),
-      }
+  async ({ productId, quantity }, thunkAPI) => {
+    const response = await axios.delete(
+      `${BASE_URL}/remove`,
+      { productId, quantity },
+      getAuthHeader()
     );
 
     if (!response.ok) throw new Error("Failed to remove item from cart");
 
     // Refresh cart
-    return userId;
+    return thunkAPI.dispatch(fetchCart());
   }
 );
 

@@ -1,160 +1,116 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:5078/api/address";
+
+// Token will be pulled at runtime inside each thunk for freshness
+const getAuthHeader = () => ({
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+});
 
 export const fetchCountries = createAsyncThunk(
   "address/fetchCountries",
   async () => {
-    const res = await fetch(`http://localhost:5078/api/address/countries`);
-    const data = await res.json();
-    return data;
+    const response = await axios.get(`${BASE_URL}/countries`);
+    return response.data;
   }
 );
 
 export const fetchCities = createAsyncThunk("address/fetchCities", async () => {
-  const res = await fetch(`http://localhost:5078/api/address/cities`);
-  const data = await res.json();
-  return data;
+  const response = await axios.get(`${BASE_URL}/cities`);
+  return response.data;
 });
 
 export const fetchAddresses = createAsyncThunk(
   "address/fetchAddresses",
-  async (userId) => {
-    const res = await fetch(
-      `http://localhost:5078/api/address/${userId}/getactive`
-    );
-    const data = res.json();
-    console.log("FETCH DATA");
-    console.log(data);
-    return data;
+  async () => {
+    const response = await axios.get(`${BASE_URL}/getactive`, getAuthHeader());
+    return response.data;
   }
 );
 
 export const fetchAllAddresses = createAsyncThunk(
-  "address/fetchActiveAddresses",
-  async (userId) => {
-    const res = await fetch(`http://localhost:5078/api/address/${userId}/get`);
-    const data = res.json();
-    return data;
+  "address/fetchAllAddresses",
+  async () => {
+    const response = await axios.get(`${BASE_URL}/get`, getAuthHeader());
+    return response.data;
   }
 );
 
 export const fetchDefaultAddress = createAsyncThunk(
   "address/fetchDefaultAddress",
-  async (userId) => {
-    const res = await fetch(
-      `http://localhost:5078/api/address/${userId}/getdefault`
+  async () => {
+    const response = await axios.get(
+      `${BASE_URL}/getdefault`,
+      getAuthHeader()
     );
-    const data = res.json();
-    return data;
+    return response.data;
   }
 );
 
 export const fetchAddressById = createAsyncThunk(
-  "address/fetchAddresses",
+  "address/fetchAddressById",
   async (id) => {
-    const res = await fetch(`http://localhost:5078/api/address/${id}`);
-    const data = res.json();
-    return data;
+    const response = await axios.get(`${BASE_URL}/${id}`, getAuthHeader());
+    return response.data;
   }
 );
 
 export const addNewAddress = createAsyncThunk(
   "address/addNewAddress",
-  async (
-    {
-      userId,
-      addressName,
-      addressType,
-      countryId,
-      cityId,
-      postCode,
-      addressDetails,
-      isDefault,
-    },
-    thunkAPI
-  ) => {
-    const response = await fetch(`http://localhost:5078/api/address`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId,
-        addressName,
-        addressType,
-        countryId,
-        cityId,
-        postCode,
-        addressDetails,
-        isDefault,
-      }),
-    });
-    if (!response.ok) throw new Error("Failed to add the address");
-    return thunkAPI.dispatch(fetchAddresses(userId)); // Refresh addresses after adding
+  async (addressData, thunkAPI) => {
+    const response = await axios.post(
+      `${BASE_URL}`,
+      addressData,
+      getAuthHeader()
+    );
+    if (response.status !== 200 && response.status !== 201)
+      throw new Error("Failed to add the address");
+
+    return thunkAPI.dispatch(fetchAddresses());
   }
 );
 
 export const editAnAddress = createAsyncThunk(
   "address/editAnAddress",
-  async (
-    {
-      userId,
-      id,
-      addressName,
-      addressType,
-      countryId,
-      cityId,
-      postCode,
-      addressDetails,
-      isDefault
-    },
-    thunkAPI
-  ) => {
-    const response = await fetch(`http://localhost:5078/api/address/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        addressName,
-        addressType,
-        countryId,
-        cityId,
-        postCode,
-        addressDetails,
-        isDefault
-      }),
-    });
-    if (!response.ok) throw new Error("Failed to edit the address");
-    return thunkAPI.dispatch(fetchAddresses(userId));
+  async ({ id, ...updateData }, thunkAPI) => {
+    const response = await axios.put(
+      `${BASE_URL}/${id}`,
+      updateData,
+      getAuthHeader()
+    );
+    if (response.status !== 200) throw new Error("Failed to edit the address");
+
+    return thunkAPI.dispatch(fetchAddresses());
   }
 );
 
 export const setDefault = createAsyncThunk(
   "address/setDefault",
-  async ({ userId, addressId }, thunkAPI) => {
-    const res = await fetch(
-      `http://localhost:5078/api/address/${addressId}/setdefault`,
-      {
-        method: "PUT",
-      }
+  async ({ addressId }, thunkAPI) => {
+    const response = await axios.put(
+      `${BASE_URL}/${addressId}/setdefault`,
+      null,
+      getAuthHeader()
     );
-    if (!res.ok) throw new Error("Failed to set address default");
-    return thunkAPI.dispatch(fetchAddresses(userId)); // Refresh default address after adding
+    if (response.status !== 200)
+      throw new Error("Failed to set address default");
+
+    return thunkAPI.dispatch(fetchAddresses());
   }
 );
 
 export const removeAddress = createAsyncThunk(
   "address/removeAddress",
-  async ({ userId, addressId }, thunkAPI) => {
-    const res = await fetch(
-      `http://localhost:5078/api/address/${addressId}/remove`,
-      {
-        method: "DELETE",
-      }
-    );
-    if (!res.ok) {
-      const errorData = await res.json();
+  async ({ addressId }, thunkAPI) => {
+    try {
+      await axios.delete(`${BASE_URL}/${addressId}/remove`, getAuthHeader());
+      return thunkAPI.dispatch(fetchAddresses());
+    } catch (error) {
       return thunkAPI.rejectWithValue(
-        errorData.message || "Failed to remove address"
+        error.response?.data?.message || "Failed to remove address"
       );
     }
-    return thunkAPI.dispatch(fetchAddresses(userId));
   }
 );
 

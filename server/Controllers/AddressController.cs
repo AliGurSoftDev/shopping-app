@@ -1,7 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
+using Microsoft.AspNetCore.Authorization;
 using ShoppingProject.Common;
+using ShoppingProject.Helpers;
 
 [ApiController]
 [Route("api/address")]
@@ -35,28 +36,37 @@ public class AddressController : ControllerBase
     }
 
     //Get addresses by UserId
-    [HttpGet("{userId}/get")]
-    public async Task<IActionResult> GetAddressesByUserIdAsync(int userId)
+    [Authorize]
+    [HttpGet("get")]
+    public async Task<IActionResult> GetAddressesByUserIdAsync()
     {
-        var addresses = await _unitOfWork.Addresses.GetAddressesByUserIdAsync(userId);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+        var addresses = await _unitOfWork.Addresses.GetAddressesByUserIdAsync(userId.Value);
         var addressDtos = _mapper.Map<IEnumerable<AddressGetDto>>(addresses);
         return Ok(addressDtos);
     }
 
     //Get active addresses by UserId
-    [HttpGet("{userId}/getactive")]
-    public async Task<IActionResult> GetActiveAddressesByUserIdAsync(int userId)
+    [Authorize]
+    [HttpGet("getactive")]
+    public async Task<IActionResult> GetActiveAddressesByUserIdAsync()
     {
-        var addresses = await _unitOfWork.Addresses.GetActiveAddressesByUserIdAsync(userId);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+        var addresses = await _unitOfWork.Addresses.GetActiveAddressesByUserIdAsync(userId.Value);
         var addressDtos = _mapper.Map<IEnumerable<AddressGetDto>>(addresses);
         return Ok(addressDtos);
     }
 
     //Get default address by UserId
-    [HttpGet("{userId}/getdefault")]
-    public async Task<IActionResult> GetDefaultAddressByUserIdAsync(int userId)
+    [Authorize]
+    [HttpGet("getdefault")]
+    public async Task<IActionResult> GetDefaultAddressByUserIdAsync()
     {
-        var address = await _unitOfWork.Addresses.GetDefaultAddressByUserIdAsync(userId);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+        var address = await _unitOfWork.Addresses.GetDefaultAddressByUserIdAsync(userId.Value);
         var addressDto = _mapper.Map<AddressGetDto>(address);
         return Ok(addressDto);
     }

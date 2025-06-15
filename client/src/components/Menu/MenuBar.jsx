@@ -23,7 +23,7 @@ const MenuBar = () => {
     <header className="w-full bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <Link to={"/"}>
+        <Link to={"/homepage"}>
           <div className="text-2xl font-bold text-violet-700">MyShop</div>
         </Link>
 
@@ -49,7 +49,7 @@ const MenuBar = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-6 text-gray-700 font-medium">
-          <a className="menu-link" href="/">
+          <a className="menu-link" href="/homepage">
             Main Page
           </a>
           <a className="menu-link" href="/products">

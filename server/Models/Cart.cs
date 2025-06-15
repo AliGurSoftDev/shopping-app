@@ -1,7 +1,7 @@
 public class Cart
 {
     public int Id { get; set; }
-    public int IsWishlist { get; set; }
+    public string IsWishlist { get; set; } = string.Empty;
 
     // Navigation property for line items
     public int UserId { get; set; }

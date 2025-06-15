@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ShoppingProject.Common;
 
 public class CartRepository : GenericRepository<Cart>, ICartRepository
 {
@@ -24,7 +25,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
         .FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    public async Task<Cart?> GetCartByUserId(int userId, int isWishlist)
+    public async Task<Cart?> GetCartByUserId(int userId, string isWishlist)
     {
         return await _context.Carts
         .Include(c => c.Items)
@@ -33,7 +34,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
         .Where(c => c.UserId == userId)
         .FirstOrDefaultAsync(c => c.IsWishlist == isWishlist);
     }
-    public async Task AddToCart(int userId, int productId, int quantity, int isWishlist)
+    public async Task AddToCart(int userId, int productId, int quantity, string isWishlist)
     {
         var cart = await GetCartByUserId(userId, isWishlist);
 
@@ -48,7 +49,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 
         if (existingItem != null)
         {
-            if (isWishlist == 1)
+            if (isWishlist == GlobalConstants.Yes)
                 return;
                 
             existingItem.Quantity += quantity;
@@ -71,7 +72,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
         }
     }
 
-    public async Task<bool> RemoveFromCart(int userId, int productId, int quantity, int isWishlist)
+    public async Task<bool> RemoveFromCart(int userId, int productId, int quantity, string isWishlist)
     {
         var cart = await GetCartByUserId(userId, isWishlist);
         if (cart == null) return false;
@@ -90,7 +91,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 
         return true;
     }
-    public async Task<bool> EmptyCartByUserId(int userId, int isWishlist)
+    public async Task<bool> EmptyCartByUserId(int userId, string isWishlist)
     {
         var cart = await GetCartByUserId(userId, isWishlist);
         if (cart == null) return false;

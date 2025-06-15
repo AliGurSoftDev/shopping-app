@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import "./index.css";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
 import { ToastContainer } from "react-toastify";
+import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { getUser } from "./features/authSlice";
 //page imports
 import HomePage from "./pages/HomePage";
 import ProductPage from "./pages/ProductPage";
@@ -19,13 +21,21 @@ import OrderPage from "./pages/OrderPage.jsx";
 import SearchResultsPage from "./pages/SearchResultsPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
 import AccountPage from "./pages/AccountPage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/homepage" element={<HomePage />} />
           <Route path="/product/:productId" element={<ProductPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
@@ -34,7 +44,10 @@ const App = () => {
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/address" element={<AddressPage />} />
           <Route path="/orders" element={<OrderPage />} />
-          <Route path="/products/search/:keyword" element={<SearchResultsPage />} />
+          <Route
+            path="/products/search/:keyword"
+            element={<SearchResultsPage />}
+          />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/account" element={<AccountPage />} />
         </Routes>

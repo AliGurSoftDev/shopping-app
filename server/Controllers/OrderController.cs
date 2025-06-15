@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing.Tree;
-using Microsoft.VisualBasic;
+using Microsoft.AspNetCore.Authorization;
+using ShoppingProject.Helpers;
 using ShoppingProject.Common;
 
 [ApiController]
@@ -39,10 +39,14 @@ public class OrderController : ControllerBase
     }
 
     // Get orders by userId
-    [HttpGet("{userId}/get")]
-    public async Task<IActionResult> GetOrdersByUserId(int userId)
+    [Authorize]
+    [HttpGet("get")]
+    public async Task<IActionResult> GetOrdersByUserId()
     {
-        var orders = await _unitOfWork.Orders.GetOrdersByUserIdAsync(userId);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
+        var orders = await _unitOfWork.Orders.GetOrdersByUserIdAsync(userId.Value);
         if (orders == null || !orders.Any())
             return NotFound();
 
@@ -63,10 +67,14 @@ public class OrderController : ControllerBase
     }
 
     // Get orders by userId and status
-    [HttpGet("{userId}/get/status={status}")]
-    public async Task<IActionResult> GetOrdersByUserIdAndStatus(int userId, string status)
+    [Authorize]
+    [HttpGet("get/status={status}")]
+    public async Task<IActionResult> GetOrdersByUserIdAndStatus(string status)
     {
-        var orders = await _unitOfWork.Orders.GetOrdersByUserIdAndStatusAsync(userId, status);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
+        var orders = await _unitOfWork.Orders.GetOrdersByUserIdAndStatusAsync(userId.Value, status);
 
         if (orders == null || !orders.Any())
             return NotFound($"No orders found for user with ID {userId} and status {status}.");
@@ -91,17 +99,21 @@ public class OrderController : ControllerBase
     }
 
     // Create an order from cart
-    [HttpPost("{userId}/placeOrder")]
-    public async Task<IActionResult> CreateOrder(int userId)
+    [Authorize]
+    [HttpPost("placeOrder")]
+    public async Task<IActionResult> CreateOrder()
     {
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var cart = await _unitOfWork.Carts.GetCartByUserId(userId, 0);
+        var cart = await _unitOfWork.Carts.GetCartByUserId(userId.Value, GlobalConstants.No);
         if (cart == null || cart.Items == null || !cart.Items.Any())
             return NotFound("No items found in the cart.");
 
-        var address = await _unitOfWork.Addresses.GetDefaultAddressByUserIdAsync(userId);
+        var address = await _unitOfWork.Addresses.GetDefaultAddressByUserIdAsync(userId.Value);
         if (address == null)
         {
             return NotFound("No default address found for user");

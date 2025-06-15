@@ -1,5 +1,8 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingProject.Helpers;
+using ShoppingProject.Common;
 
 [ApiController]
 [Route("api/cart")]
@@ -39,13 +42,16 @@ public class CartController : ControllerBase
     }
 
     // Get cart by userId
-    [HttpGet("{userId}/get")]
-    public async Task<IActionResult> GetCartByUserId(int userId)
+    [Authorize]
+    [HttpGet("get")]
+    public async Task<IActionResult> GetCartByUserId()
     {
-        var cart = await _unitOfWork.Carts.GetCartByUserId(userId, isCart);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+        var cart = await _unitOfWork.Carts.GetCartByUserId(userId.Value, GlobalConstants.No);
         if (cart == null)
         {
-            cart = new Cart { UserId = userId, IsWishlist = isCart };
+            cart = new Cart { UserId = userId.Value, IsWishlist = GlobalConstants.No };
             await _unitOfWork.Carts.AddAsync(cart);
             await _unitOfWork.SaveChangesAsync();
         }
@@ -55,13 +61,17 @@ public class CartController : ControllerBase
     }
 
     // Get cart by userId
-    [HttpGet("{userId}/wishlist")]
-    public async Task<IActionResult> GetCartByWishlistId(int userId)
+    [Authorize]
+    [HttpGet("wishlist")]
+    public async Task<IActionResult> GetCartByWishlistId()
     {
-        var wishlist = await _unitOfWork.Carts.GetCartByUserId(userId, isWishlist);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
+        var wishlist = await _unitOfWork.Carts.GetCartByUserId(userId.Value, GlobalConstants.Yes);
         if (wishlist == null)
         {
-            wishlist = new Cart { UserId = userId, IsWishlist = isWishlist };
+            wishlist = new Cart { UserId = userId.Value, IsWishlist = GlobalConstants.Yes };
             await _unitOfWork.Carts.AddAsync(wishlist);
             await _unitOfWork.SaveChangesAsync();
         }
@@ -70,45 +80,66 @@ public class CartController : ControllerBase
     }
 
     //Empty cart by userId
-    [HttpDelete("{userId}/emptyCart")]
-    public async Task<IActionResult> EmptyCartByUserId(int userId)
+    [Authorize]
+    [HttpDelete("emptyCart")]
+    public async Task<IActionResult> EmptyCartByUserId()
     {
-        await _unitOfWork.Carts.EmptyCartByUserId(userId, isCart);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
+        await _unitOfWork.Carts.EmptyCartByUserId(userId.Value, GlobalConstants.No);
         await _unitOfWork.SaveChangesAsync();
         return Ok("Cart emptied");
     }
+
     //Empty cart by userId
-    [HttpDelete("{userId}/emptyWishlist")]
-    public async Task<IActionResult> EmptyWishlistByUserId(int userId)
+    [Authorize]
+    [HttpDelete("emptyWishlist")]
+    public async Task<IActionResult> EmptyWishlistByUserId()
     {
-        await _unitOfWork.Carts.EmptyCartByUserId(userId, isWishlist);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
+        await _unitOfWork.Carts.EmptyCartByUserId(userId.Value, GlobalConstants.Yes);
         await _unitOfWork.SaveChangesAsync();
         return Ok("Wishlist emptied");
     }
 
     // Add product to cart
-    [HttpPost("{userId}/add")]
-    public async Task<IActionResult> AddToCart(int userId, [FromBody] LineItemDto lineItemDto)
+    [Authorize]
+    [HttpPost("add")]
+    public async Task<IActionResult> AddToCart([FromBody] LineItemDto lineItemDto)
     {
-        await _unitOfWork.Carts.AddToCart(userId, lineItemDto.ProductId, lineItemDto.Quantity, isCart);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
+        await _unitOfWork.Carts.AddToCart(userId.Value, lineItemDto.ProductId, lineItemDto.Quantity, GlobalConstants.No);
         await _unitOfWork.SaveChangesAsync();
         return Ok("Item added to cart");
     }
 
     // Add product to wishlist
-    [HttpPost("{userId}/addwishlist")]
-    public async Task<IActionResult> AddToWishlist(int userId, [FromBody] LineItemDto lineItemDto)
+    [Authorize]
+    [HttpPost("addwishlist")]
+    public async Task<IActionResult> AddToWishlist([FromBody] LineItemDto lineItemDto)
     {
-        await _unitOfWork.Carts.AddToCart(userId, lineItemDto.ProductId, lineItemDto.Quantity, isWishlist);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
+        await _unitOfWork.Carts.AddToCart(userId.Value, lineItemDto.ProductId, lineItemDto.Quantity, GlobalConstants.Yes);
         await _unitOfWork.SaveChangesAsync();
         return Ok("Item added to wishlist");
     }
 
     // Remove product from cart
-    [HttpDelete("{userId}/remove")]
-    public async Task<IActionResult> RemoveFromCart(int userId, [FromBody] LineItemDto lineItemDto)
+    [Authorize]
+    [HttpDelete("remove")]
+    public async Task<IActionResult> RemoveFromCart([FromBody] LineItemDto lineItemDto)
     {
-        var result = await _unitOfWork.Carts.RemoveFromCart(userId, lineItemDto.ProductId, lineItemDto.Quantity, isCart);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
+        var result = await _unitOfWork.Carts.RemoveFromCart(userId.Value, lineItemDto.ProductId, lineItemDto.Quantity, GlobalConstants.No);
 
         if (!result)
             return NotFound($"Item with ProductId: {lineItemDto.ProductId} not found in the cart for UserId: {userId}");
@@ -118,10 +149,14 @@ public class CartController : ControllerBase
     }
 
     // Remove product from wishlist
-    [HttpDelete("{userId}/removewishlist")]
-    public async Task<IActionResult> RemoveFromWishlist(int userId, [FromBody] LineItemDto lineItemDto)
+    [Authorize]
+    [HttpDelete("removewishlist")]
+    public async Task<IActionResult> RemoveFromWishlist([FromBody] LineItemDto lineItemDto)
     {
-        var result = await _unitOfWork.Carts.RemoveFromCart(userId, lineItemDto.ProductId, lineItemDto.Quantity, isWishlist);
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
+        var result = await _unitOfWork.Carts.RemoveFromCart(userId.Value, lineItemDto.ProductId, lineItemDto.Quantity, GlobalConstants.Yes);
 
         if (!result)
             return NotFound($"Item with ProductId: {lineItemDto.ProductId} not found in the wishlist for UserId: {userId}");

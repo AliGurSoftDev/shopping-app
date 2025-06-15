@@ -1,57 +1,53 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:5078/api/cart";
+const getAuthHeader = () => ({
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+});
 
 export const addToWishlist = createAsyncThunk(
   "cart/addToWishlist",
-  async ({ userId, productId }, thunkAPI) => {
-    const response = await fetch(
-      `http://localhost:5078/api/cart/${userId}/addwishlist`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity: 1 }),
-      }
+  async ({ productId }, thunkAPI) => {
+    const response = await axios.post(
+      `${BASE_URL}/addwishlist`,
+      { productId, quantity: 1 },
+      getAuthHeader()
     );
     if (!response.ok) throw new Error("Failed to add to wishlist");
-    return thunkAPI.dispatch(fetchWishlist(userId));
+    return thunkAPI.dispatch(fetchWishlist());
   }
 );
 
 export const fetchWishlist = createAsyncThunk(
   "cart/fetchWishlist",
-  async (userId) => {
-    const res = await fetch(
-      `http://localhost:5078/api/cart/${userId}/wishlist`
-    );
-    const data = await res.json();
-    return data;
+  async () => {
+    const response = await axios.get(`${BASE_URL}/wishlist`, getAuthHeader());
+    return response.data;
   }
 );
 
 export const emptyWishlist = createAsyncThunk(
   "cart/emptyWishlist",
-  async (userId) => {
-    await fetch(`http://localhost:5078/api/cart/${userId}/emptyWishlist`, {
-      method: "DELETE",
-    });
-    return userId;
+  async () => {
+    await axios.delete(`${BASE_URL}/emptyWishlist`, getAuthHeader());
+    return;
   }
 );
 
 export const removeFromWishlist = createAsyncThunk(
   "cart/removeFromWishlist",
-  async ({ userId, productId }) => {
-    const response = await fetch(
-      `http://localhost:5078/api/cart/${userId}/removewishlist`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity: 1 }),
-      }
+  async ({ productId }, thunkAPI) => {
+    const response = await axios.delete(
+      `${BASE_URL}/removewishlist`,
+      { productId, quantity: 1 },
+      getAuthHeader()
     );
 
     if (!response.ok) throw new Error("Failed to remove item from wishlist");
 
-    return userId;
+    // Refresh cart
+    return thunkAPI.dispatch(fetchWishlist());
   }
 );
 
