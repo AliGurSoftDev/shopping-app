@@ -9,11 +9,13 @@ import {
   emptyCart,
 } from "../features/cartSlice";
 import { useAnimatedNumber } from "../hooks/useAnimatedNumber";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const userId = 1;
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchCart(userId));
@@ -40,6 +42,11 @@ const CartPage = () => {
   const handleEmptyCart = () => {
     dispatch(emptyCart(userId)).then(() => dispatch(fetchCart(userId)));
   };
+
+  const handleCheckout = () => {
+    navigate("/checkout");
+  }
+
   const animatedTotal = useAnimatedNumber(cart?.totalPrice ?? 0, 500);
 
   return (
@@ -75,6 +82,7 @@ const CartPage = () => {
               <button
                 className="w-full bg-violet-500 hover:bg-green-500 active:bg-violet-300 transition-colors duration-100 focus:!outline-none
                     text-white font-semibold hover:text-white py-2 px-4 border border-violet-500 hover:border-transparent rounded"
+                    onClick={handleCheckout}
               >
                 Checkout
               </button>

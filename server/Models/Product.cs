@@ -11,5 +11,5 @@ public class Product
 
     // Navigation Property
     public Category? Category { get; set; }
-    public List<ProductImage>? ImageUrls { get; set; }
+    public ICollection<ProductImage>? ImageUrls { get; set; }
 }

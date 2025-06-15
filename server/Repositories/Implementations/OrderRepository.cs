@@ -14,6 +14,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
         return await _context.Orders
         .Include(o => o.Items)
         .ThenInclude(i => i.Product)
+        .ThenInclude(p => p.ImageUrls)
         .Where(o => o.UserId == userId)
         .OrderBy(o => o.OrderDate)
         .ToListAsync();
@@ -51,7 +52,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
             .ToListAsync();
     }
     // OrderRepository.cs
-    public async Task<Order> CreateOrder(Cart cart)
+    public async Task<Order> CreateOrder(Cart cart, int addressId)
     {
         if (cart == null || cart.Items == null || !cart.Items.Any())
             throw new ArgumentException("Cart is null or empty.");
@@ -63,7 +64,8 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
             UserId = cart.UserId,
             Status = OrderStatusEnum.Pending,
             OrderDate = DateTime.UtcNow,
-            Items = cart.Items
+            Items = cart.Items,
+            AddressId = addressId
         };
 
         foreach (var item in cart.Items)

@@ -21,7 +21,7 @@ public class AddressController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var addresses = await _unitOfWork.Addresses.GetAllAsync();
-        var addressDtos = _mapper.Map<IEnumerable<AddressDto>>(addresses);
+        var addressDtos = _mapper.Map<IEnumerable<AddressGetDto>>(addresses);
         return Ok(addressDtos);
     }
 
@@ -30,7 +30,7 @@ public class AddressController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var address = await _unitOfWork.Addresses.GetByIdAsync(id);
-        var addressDto = _mapper.Map<AddressDto>(address);
+        var addressDto = _mapper.Map<AddressGetDto>(address);
         return Ok(addressDto);
     }
 
@@ -39,7 +39,7 @@ public class AddressController : ControllerBase
     public async Task<IActionResult> GetAddressesByUserIdAsync(int userId)
     {
         var addresses = await _unitOfWork.Addresses.GetAddressesByUserIdAsync(userId);
-        var addressDtos = _mapper.Map<IEnumerable<AddressDto>>(addresses);
+        var addressDtos = _mapper.Map<IEnumerable<AddressGetDto>>(addresses);
         return Ok(addressDtos);
     }
 
@@ -48,7 +48,7 @@ public class AddressController : ControllerBase
     public async Task<IActionResult> GetActiveAddressesByUserIdAsync(int userId)
     {
         var addresses = await _unitOfWork.Addresses.GetActiveAddressesByUserIdAsync(userId);
-        var addressDtos = _mapper.Map<IEnumerable<AddressDto>>(addresses);
+        var addressDtos = _mapper.Map<IEnumerable<AddressGetDto>>(addresses);
         return Ok(addressDtos);
     }
 
@@ -57,7 +57,7 @@ public class AddressController : ControllerBase
     public async Task<IActionResult> GetDefaultAddressByUserIdAsync(int userId)
     {
         var address = await _unitOfWork.Addresses.GetDefaultAddressByUserIdAsync(userId);
-        var addressDto = _mapper.Map<AddressDto>(address);
+        var addressDto = _mapper.Map<AddressGetDto>(address);
         return Ok(addressDto);
     }
 
@@ -81,7 +81,7 @@ public class AddressController : ControllerBase
 
     //Create new address
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] AddressDto addressDto)
+    public async Task<IActionResult> Create([FromBody] AddressCreateDto addressDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -96,13 +96,13 @@ public class AddressController : ControllerBase
             await SetDefaultAddress(address.Id);
 
 
-        var newAddressDto = _mapper.Map<AddressDto>(address);
+        var newAddressDto = _mapper.Map<AddressGetDto>(address);
         return CreatedAtAction(nameof(GetById), new { id = newAddressDto.Id }, newAddressDto);
     }
 
     //Update an existing address
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] AddressDto addressDto)
+    public async Task<IActionResult> Update(int id, [FromBody] AddressCreateDto addressDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -115,7 +115,7 @@ public class AddressController : ControllerBase
         _unitOfWork.Addresses.Update(existingAddress);
         await _unitOfWork.SaveChangesAsync();
 
-        return StatusCode(400, addressDto);
+        return NoContent();
     }
 
     //Set an address as default by Id
@@ -128,11 +128,8 @@ public class AddressController : ControllerBase
         var newDefaultAddress = await _unitOfWork.Addresses.GetByIdAsync(id);
         if (newDefaultAddress == null)
             return NotFound();
-
         var userId = newDefaultAddress.UserId;
-
         var oldDefaultAddress = await _unitOfWork.Addresses.GetDefaultAddressByUserIdAsync(userId);
-
         if (oldDefaultAddress != null)
         {
             oldDefaultAddress.IsDefault = GlobalConstants.No;

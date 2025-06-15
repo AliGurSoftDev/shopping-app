@@ -1,48 +1,24 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategoryDetails } from "../features/categorySlice";
+import { fetchProductsByCategory } from "../features/productSlice";
 import MenuBar from "../components/menu/MenuBar";
 import CartSideBar from "../components/cart/CartSideBar";
 import ProductCard from "../components/Product/ProductCard";
 import Breadcrumb from "../components/ui/BreadCrumb";
 
 const CategoryPage = () => {
+  const dispatch = useDispatch();
   const { categoryId } = useParams();
-  const [products, setProducts] = useState([]);
-  const [category, setCategory] = useState(null);
+  const products = useSelector((state) => state.product.products);
+  const category = useSelector((state) => state.category.categoryDetails);
   const userId = 1; // Replace with dynamic user ID if needed
-
+  
   useEffect(() => {
-    const fetchCategoryDetails = async () => {
-      try {
-        const response = await fetch(`http://localhost:5078/api/category/${categoryId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setCategory(data);
-        } else {
-          console.error("Failed to fetch category details.");
-        }
-      } catch (error) {
-        console.error("Error fetching category:", error);
-      }
-    };
-
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(`http://localhost:5078/api/product/category=${categoryId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setProducts(data);
-        } else {
-          console.error("Failed to fetch products.");
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    fetchCategoryDetails();
-    fetchProducts();
-  }, [categoryId]);
+    dispatch(fetchCategoryDetails(categoryId));
+    dispatch(fetchProductsByCategory(categoryId));
+  },[dispatch, categoryId]);
 
   return (
     <div>

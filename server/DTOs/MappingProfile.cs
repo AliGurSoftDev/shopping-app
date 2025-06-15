@@ -1,4 +1,5 @@
 using AutoMapper;
+using ShoppingProject.Common;
 
 public class MappingProfile : Profile
 {
@@ -28,10 +29,12 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
 
         // LineItem
+        CreateMap<LineItemDto, LineItem>();
         CreateMap<LineItem, LineItemDto>()
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : "Product not found"))
-            .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Product != null ? src.Product.Price : GetDefaultValue(src.Product.Price.GetType())));
-        CreateMap<LineItemDto, LineItem>();
+            .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Product != null ? src.Product.Price : 0))
+            .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Product != null && src.Product.ImageUrls != null &&
+            src.Product.ImageUrls.Any(img => img.IsThumbnail == "Y") ? src.Product.ImageUrls.First(img => img.IsThumbnail == "Y").ImageUrl : "/images/placeholder.jpg"));
 
         // Order
         CreateMap<Order, OrderDto>();
@@ -41,8 +44,10 @@ public class MappingProfile : Profile
         CreateMap<OrderStatusUpdateDto, Order>();
 
         // Address
-        CreateMap<Address, AddressDto>();
-        CreateMap<AddressDto, Address>()
+        CreateMap<Address, AddressGetDto>()
+        .ForMember(dest => dest.CountryName, opt => opt.MapFrom(src => src.Country != null ? src.Country.CountryName : string.Empty))
+        .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.City != null ? src.City.CityName : string.Empty));
+        CreateMap<AddressCreateDto, Address>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null && !srcMember.Equals(GetDefaultValue(srcMember.GetType()))));
 
         //Country

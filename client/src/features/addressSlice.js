@@ -18,8 +18,12 @@ export const fetchCities = createAsyncThunk("address/fetchCities", async () => {
 export const fetchAddresses = createAsyncThunk(
   "address/fetchAddresses",
   async (userId) => {
-    const res = await fetch(`http://localhost:5078/api/address/${userId}/getactive`);
+    const res = await fetch(
+      `http://localhost:5078/api/address/${userId}/getactive`
+    );
     const data = res.json();
+    console.log("FETCH DATA");
+    console.log(data);
     return data;
   }
 );
@@ -79,11 +83,45 @@ export const addNewAddress = createAsyncThunk(
         cityId,
         postCode,
         addressDetails,
-        isDefault:(isDefault == 1) ? "Y" : "N" 
+        isDefault,
       }),
     });
     if (!response.ok) throw new Error("Failed to add the address");
     return thunkAPI.dispatch(fetchAddresses(userId)); // Refresh addresses after adding
+  }
+);
+
+export const editAnAddress = createAsyncThunk(
+  "address/editAnAddress",
+  async (
+    {
+      userId,
+      id,
+      addressName,
+      addressType,
+      countryId,
+      cityId,
+      postCode,
+      addressDetails,
+      isDefault
+    },
+    thunkAPI
+  ) => {
+    const response = await fetch(`http://localhost:5078/api/address/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        addressName,
+        addressType,
+        countryId,
+        cityId,
+        postCode,
+        addressDetails,
+        isDefault
+      }),
+    });
+    if (!response.ok) throw new Error("Failed to edit the address");
+    return thunkAPI.dispatch(fetchAddresses(userId));
   }
 );
 
@@ -104,9 +142,12 @@ export const setDefault = createAsyncThunk(
 export const removeAddress = createAsyncThunk(
   "address/removeAddress",
   async ({ userId, addressId }, thunkAPI) => {
-    const res = await fetch(`http://localhost:5078/api/address/${addressId}/remove`, {
-      method: "DELETE",
-    });
+    const res = await fetch(
+      `http://localhost:5078/api/address/${addressId}/remove`,
+      {
+        method: "DELETE",
+      }
+    );
     if (!res.ok) {
       const errorData = await res.json();
       return thunkAPI.rejectWithValue(

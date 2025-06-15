@@ -1,36 +1,27 @@
 // src/pages/Homepage.jsx
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchFeaturedCategories } from "../features/categorySlice";
+import { fetchFeaturedProducts } from "../features/productSlice";
 import MenuBar from "../components/menu/MenuBar";
 import CartSideBar from "../components/cart/CartSideBar";
 import CategoryCard from "../components/category/CategoryCard";
 import ProductCard from "../components/product/ProductCard";
 
 const Homepage = () => {
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
+  const dispatch = useDispatch();
+  const featuredProducts = useSelector(
+    (state) => state.product.featuredProducts
+  );
+  const featuredCategories = useSelector(
+    (state) => state.category.featuredCategories
+  );
   const userId = 1;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [catRes, prodRes] = await Promise.all([
-          fetch("http://localhost:5078/api/category/featured"),
-          fetch("http://localhost:5078/api/product/featured"),
-        ]);
-        const [catData, prodData] = await Promise.all([
-          catRes.json(),
-          prodRes.json(),
-        ]);
-        setCategories(catData);
-        setProducts(prodData);
-      } catch (err) {
-        console.error("Failed to fetch homepage data", err);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+    dispatch(fetchFeaturedCategories());
+    dispatch(fetchFeaturedProducts());
+  }, [dispatch]);
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 relative">
       <MenuBar />
@@ -47,11 +38,13 @@ const Homepage = () => {
         <h2 className="text-2xl font-bold mb-6  text-violet-600">
           Featured Categories
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          {categories.map((category) => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
-        </div>
+        {featuredCategories && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            {featuredCategories.map((category) => (
+              <CategoryCard key={category.id} category={category} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Featured Products */}
@@ -59,11 +52,13 @@ const Homepage = () => {
         <h2 className="text-2xl font-bold mb-6 text-violet-600">
           Featured Products
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {featuredProducts && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </section>
       <CartSideBar userId={userId} />
 

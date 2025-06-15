@@ -28,6 +28,26 @@ export const cancelOrder = createAsyncThunk(
   }
 );
 
+export const createOrder = createAsyncThunk(
+  "order/createOrder",
+  async ({ userId }, thunkAPI) => {
+    const res = await fetch(
+      `http://localhost:5078/api/order/${userId}/placeOrder`,
+      {
+        method: "POST",
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log(errorData.message)
+      return thunkAPI.rejectWithValue(
+        errorData.message || "Failed to create order."
+      );
+    }
+    return thunkAPI.dispatch(fetchOrders(userId));
+  }
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {

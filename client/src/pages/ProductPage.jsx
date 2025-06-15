@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategoryDetails } from "../features/categorySlice";
+import { fetchProductById } from "../features/productSlice";
 import { useParams } from 'react-router-dom'; // Eğer react-router kullanıyorsan
 import ProductDetails from '../components/product/ProductDetails.jsx';
 import ProductActions from '../components/product/ProductActions.jsx';
@@ -8,53 +11,17 @@ import MenuBar from '../components/menu/MenuBar.jsx';
 import Breadcrumb from '../components/ui/BreadCrumb.jsx';
 
 const ProductPage = () => {
-  const { id } = useParams(); // URL'den product id alıyoruz, örn: /product/3
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [userId] = useState(1);
-  const [category, setCategory] = useState(null);
-  useEffect(() => {
-    // API'den veri çek
-    const fetchProduct = async () => {
-      try {
-        const response = await fetch(`http://localhost:5078/api/product/${id}`);
-        if (!response.ok) {
-          throw new Error('Ürün bulunamadı');
-        }
-        const data = await response.json();
-        setProduct(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [id]);
+  const dispatch = useDispatch();
+  const { productId } = useParams();
+  const product = useSelector((state) => state.product.selectedProduct);
+  const category = useSelector((state) => state.category.categoryDetails);
+  const userId = 1;
 
   useEffect(() => {
-  if (!product) return;
+  dispatch(fetchProductById(productId));
+  product && dispatch(fetchCategoryDetails(product.categoryId));
+  }, [dispatch, productId, product]);
 
-  const fetchCategory = async () => {
-    try {
-      const response = await fetch(`http://localhost:5078/api/category/${product.categoryId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setCategory(data);
-      }
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  fetchCategory();
-}, [product]); // sadece product değiştiğinde çalışır
-
-
-  if (loading) return <p>Yükleniyor...</p>;
-  if (error) return <p>Hata: {error}</p>;
   if (!product) return <p>Ürün bulunamadı</p>;
 
   return (

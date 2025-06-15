@@ -29,6 +29,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
         return await _context.Carts
         .Include(c => c.Items)
         .ThenInclude(i => i.Product)
+        .ThenInclude(p => p.ImageUrls)
         .Where(c => c.UserId == userId)
         .FirstOrDefaultAsync(c => c.IsWishlist == isWishlist);
     }

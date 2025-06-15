@@ -1,13 +1,17 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-const CountryCitySelector = ({
-  countryId,
-  cityId,
-  onChange
-}) => {
+const CountryCitySelector = ({countryId, cityId, countryName, cityName, onChange}) => {
+  
   const countries = useSelector((state) => state.address.countries);
   const cities = useSelector((state) => state.address.cities);
+
+  if (!countryId && countryName) {
+    countryId = countries.find((country) => country.countryName === countryName).id;
+  }
+  if (!cityId && cityName) {
+    cityId = cities.find((city) => city.cityName === cityName).id;
+  }
 
   const filteredCities = cities.filter(
     (c) => c.countryId === parseInt(countryId)

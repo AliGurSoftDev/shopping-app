@@ -4,7 +4,7 @@ const ProductCard = ({ product }) => {
   const placeholderImage = "/images/placeholder.jpg";
 
   // Get first image by displayOrder or fallback
-  const sortedImages = product.imageUrls?.sort((a, b) => a.displayOrder - b.displayOrder);
+  const sortedImages = [...product.imageUrls]?.sort((a, b) => a.displayOrder - b.displayOrder);
   const imageUrl = sortedImages?.[0]?.imageUrl || placeholderImage;
 
   return (

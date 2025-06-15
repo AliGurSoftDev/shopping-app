@@ -40,4 +40,12 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
             .OrderBy(p => p.Id)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Product>> GetSearchedProductsAsync(string keyword)
+    {
+        return await _context.Products
+            .Where(p => p.Name.ToLower().Contains(keyword.ToLower()))
+            .Include(p => p.ImageUrls)
+            .ToListAsync();
+    }
 }

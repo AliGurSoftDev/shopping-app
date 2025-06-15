@@ -46,8 +46,13 @@ namespace server.Migrations
                     b.Property<int>("CountryId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("IsDefault")
-                        .HasColumnType("integer");
+                    b.Property<string>("IsDefault")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("IsRemoved")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("PostCode")
                         .HasColumnType("integer");
@@ -63,7 +68,7 @@ namespace server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("Cart", b =>
@@ -84,7 +89,7 @@ namespace server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("Category", b =>
@@ -99,6 +104,10 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("IsFeatured")
                         .HasColumnType("integer");
 
@@ -108,7 +117,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("City", b =>
@@ -130,7 +139,7 @@ namespace server.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
                 });
 
             modelBuilder.Entity("Country", b =>
@@ -147,7 +156,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("LineItem", b =>
@@ -181,7 +190,7 @@ namespace server.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("LineItems");
+                    b.ToTable("LineItems", (string)null);
                 });
 
             modelBuilder.Entity("Order", b =>
@@ -211,7 +220,7 @@ namespace server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Product", b =>
@@ -232,10 +241,6 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("IsFeatured")
                         .HasColumnType("integer");
 
@@ -253,7 +258,36 @@ namespace server.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
+                });
+
+            modelBuilder.Entity("ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("IsThumbnail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages", (string)null);
                 });
 
             modelBuilder.Entity("User", b =>
@@ -285,7 +319,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Address", b =>
@@ -382,6 +416,17 @@ namespace server.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("ProductImage", b =>
+                {
+                    b.HasOne("Product", "Product")
+                        .WithMany("ImageUrls")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Cart", b =>
                 {
                     b.Navigation("Items");
@@ -395,6 +440,11 @@ namespace server.Migrations
             modelBuilder.Entity("Order", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Product", b =>
+                {
+                    b.Navigation("ImageUrls");
                 });
 
             modelBuilder.Entity("User", b =>

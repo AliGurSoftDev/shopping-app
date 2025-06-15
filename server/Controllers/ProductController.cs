@@ -35,6 +35,7 @@ public class ProductController : ControllerBase
         return Ok(productDto);
     }
 
+    //Get products by categorId
     [HttpGet("category={categoryId}")]
     public async Task<IActionResult> GetProductByCategory(int categoryId)
     {
@@ -43,12 +44,22 @@ public class ProductController : ControllerBase
         return Ok(productDtos);
     }
 
+    //Get featured products
     [HttpGet("featured")]
     public async Task<IActionResult> GetFeaturedProductsAsync()
     {
         var featuredProducts = await _unitOfWork.Products.GetFeaturedProductsAsync();
         var featuredProductDtos = _mapper.Map<IEnumerable<ProductDto>>(featuredProducts);
         return Ok(featuredProductDtos);
+    }
+
+    //Get searched products
+    [HttpGet("search={keyword}")]
+    public async Task<IActionResult> GetSearchedProductsAsync(string keyword)
+    {
+        var searchedProducts = await _unitOfWork.Products.GetSearchedProductsAsync(keyword);
+        var searchedProductDtos = _mapper.Map<IEnumerable<ProductDto>>(searchedProducts);
+        return Ok(searchedProductDtos);
     }
 
     // Create a new product
@@ -76,9 +87,8 @@ public class ProductController : ControllerBase
         var existingProduct = await _unitOfWork.Products.GetByIdAsync(id);
         if (existingProduct == null)
             return NotFound();
-            if(productDto.Name.Equals(default))
-            Console.WriteLine("girdi");
-        _mapper.Map(productDto, existingProduct);
+        if (productDto.Name.Equals(default))
+            _mapper.Map(productDto, existingProduct);
         _unitOfWork.Products.Update(existingProduct);
         await _unitOfWork.SaveChangesAsync();
 

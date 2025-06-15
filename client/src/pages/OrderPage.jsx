@@ -5,6 +5,7 @@ import { fetchAllAddresses } from "../features/addressSlice";
 import MenuBar from "../components/menu/MenuBar";
 import OrderCard from "../components/order/OrderCard";
 import { toast } from "react-toastify";
+import CartSideBar from "../components/cart/CartSideBar";
 
 const OrdersPage = () => {
   const dispatch = useDispatch();
@@ -29,9 +30,9 @@ const OrdersPage = () => {
     );
   };
 
-  const filteredOrders = orders.filter(
-    (order) => !statusFilter || order.status === statusFilter
-  );
+  const filteredOrders = orders
+    .filter((order) => !statusFilter || order.status === statusFilter)
+    .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
 
   const handleCancel = async (orderId) => {
     try {
@@ -44,6 +45,7 @@ const OrdersPage = () => {
   return (
     <>
       <MenuBar />
+      <CartSideBar userId={userId} />
       <div className="p-6 max-w-4xl mx-auto">
         <h1 className="mt-4 text-2xl font-bold text-violet-700">Your Orders</h1>
 
@@ -64,31 +66,33 @@ const OrdersPage = () => {
           <option value="Failed">Failed</option>
         </select>
 
-        <ul className="space-y-4">
-          {filteredOrders.length > 0 ? (
-            filteredOrders.map((order) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                isExpanded={expandedOrderIds.includes(order.id)}
-                toggleExpand={toggleExpand}
-                onCancel={handleCancel}
-                addressName={
-                  allAddresses.find((a) => a.id === order.addressId)
-                    ?.addressName
-                }
-                addressType={
-                  allAddresses.find((a) => a.id === order.addressId)
-                    ?.addressType
-                }
-              />
-            ))
-          ) : (
-            <p className="text-gray-600 text-lg font-bold text-center mt-8">
-              No orders to display.
-            </p>
-          )}
-        </ul>
+        {filteredOrders && allAddresses && (
+          <ul className="space-y-4">
+            {filteredOrders.length > 0 ? (
+              filteredOrders.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  isExpanded={expandedOrderIds.includes(order.id)}
+                  toggleExpand={toggleExpand}
+                  onCancel={handleCancel}
+                  addressName={
+                    allAddresses.find((a) => a.id === order.addressId)
+                      ?.addressName
+                  }
+                  addressType={
+                    allAddresses.find((a) => a.id === order.addressId)
+                      ?.addressType
+                  }
+                />
+              ))
+            ) : (
+              <p className="text-gray-600 text-lg font-bold text-center mt-8">
+                No orders to display.
+              </p>
+            )}
+          </ul>
+        )}
       </div>
     </>
   );

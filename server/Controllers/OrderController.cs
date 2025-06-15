@@ -90,6 +90,7 @@ public class OrderController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = newOrderDto.Id }, newOrderDto);
     }
 
+    // Create an order from cart
     [HttpPost("{userId}/placeOrder")]
     public async Task<IActionResult> CreateOrder(int userId)
     {
@@ -100,19 +101,24 @@ public class OrderController : ControllerBase
         if (cart == null || cart.Items == null || !cart.Items.Any())
             return NotFound("No items found in the cart.");
 
+        var address = await _unitOfWork.Addresses.GetDefaultAddressByUserIdAsync(userId);
+        if (address == null)
+        {
+            return NotFound("No default address found for user");
+        }
         try
-        {
-            var newOrder = await _unitOfWork.Orders.CreateOrder(cart);
-            if (newOrder == null)
-                return StatusCode(500, "Order creation failed.");
+            {
+                var newOrder = await _unitOfWork.Orders.CreateOrder(cart, address.Id);
+                if (newOrder == null)
+                    return StatusCode(500, "Order creation failed.");
 
-            await _unitOfWork.SaveChangesAsync();
-            return Ok($"Order No:{newOrder.Id} successfully created.");
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An error occurred while creating the order: {ex.Message}");
-        }
+                await _unitOfWork.SaveChangesAsync();
+                return Ok($"Order No:{newOrder.Id} successfully created.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while creating the order: {ex.Message}");
+            }
     }
 
     //Update an existing Order

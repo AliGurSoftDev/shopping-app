@@ -1,9 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
-const AddressList = ({ onRemove, onSetDefault }) => {
+const AddressList = ({ onRemove, onSetDefault, onEditAddress }) => {
   const addresses = useSelector((state) => state.address.addresses);
-  const countries = useSelector((state) => state.address.countries);
-  const cities = useSelector((state) => state.address.cities);
 
   return (
     <>
@@ -23,40 +21,47 @@ const AddressList = ({ onRemove, onSetDefault }) => {
                       : "bg-blue-50"
                   }`}
                 >
-                  <p>
-                    <strong>{addr.addressName}</strong> (
-                    {addr.addressType === 0 ? "Home" : "Work"})
-                  </p>
-                  <p>{addr.addressDetails}</p>
-                  <p>
-                    {cities.find((c) => c.id === addr.cityId)?.cityName ||
-                      "Unknown"}
-                    {" / "}
-                    {countries
-                      .find((c) => c.id === addr.countryId)
-                      ?.countryName.toUpperCase() || "Unknown"}
-                  </p>
-                  <p>Post Code: {addr.postCode}</p>
-
-                  <div className=" justify-self-end">
-                    {addr.isDefault === "Y" ? (
-                      <p className="text-gray-600 mt-4">Default Address</p>
-                    ) : (
-                      <>
-                        <button
-                          className=" bg-transparent border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                          onClick={() => onSetDefault(addr.id)}
-                        >
-                          Set Default
-                        </button>
-                        <button
-                          className="ml-2 bg-transparent border-red-600 text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600"
-                          onClick={() => onRemove(addr.id)}
-                        >
-                          X
-                        </button>
-                      </>
-                    )}
+                  <div className="flex justify-between">
+                    <div>
+                      <p>
+                        <strong>{addr.addressName}</strong> ({addr.addressType})
+                      </p>
+                      <p>{addr.addressDetails}</p>
+                      <p>
+                        {addr.cityName || "Unknown"}
+                        {" / "}
+                        {addr.countryName?.toUpperCase() || "Unknown"}
+                      </p>
+                      <p>Post Code: {addr.postCode}</p>
+                    </div>
+                    <div className="text-right min-w-44">
+                      <button
+                        className="w-full bg-transparent border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                        onClick={() => onEditAddress(addr)}
+                      >
+                        Edit Address
+                      </button>
+                      <div>
+                        {addr.isDefault === "Y" ? (
+                          <p className="text-gray-600 mt-4">Default Address</p>
+                        ) : (
+                          <>
+                            <button
+                              className=" bg-transparent border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white mt-4"
+                              onClick={() => onSetDefault(addr.id)}
+                            >
+                              Set Default
+                            </button>
+                            <button
+                              className="ml-2 bg-transparent border-red-600 text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600"
+                              onClick={() => onRemove(addr.id)}
+                            >
+                              X
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </li>
               ))}

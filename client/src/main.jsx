@@ -16,6 +16,9 @@ import CartPage from "./pages/CartPage.jsx";
 import WishlistPage from "./pages/WishlistPage.jsx";
 import AddressPage from "./pages/AddressPage.jsx";
 import OrderPage from "./pages/OrderPage.jsx";
+import SearchResultsPage from "./pages/SearchResultsPage.jsx";
+import CheckoutPage from "./pages/CheckoutPage.jsx";
+import AccountPage from "./pages/AccountPage.jsx";
 
 const App = () => {
   return (
@@ -23,7 +26,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/product/:productId" element={<ProductPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/category/:categoryId" element={<CategoryPage />} />
@@ -31,6 +34,9 @@ const App = () => {
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/address" element={<AddressPage />} />
           <Route path="/orders" element={<OrderPage />} />
+          <Route path="/products/search/:keyword" element={<SearchResultsPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/account" element={<AccountPage />} />
         </Routes>
       </Router>
       <ToastContainer position="bottom-right" autoClose={3000} />

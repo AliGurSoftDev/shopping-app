@@ -4,12 +4,8 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onRemove }) => {
   const [imageUrl, setImageUrl] = useState("/images/placeholder.jpg");
 
   useEffect(() => {
-    const testUrl = `/images/products/${item.productId}/1.jpg`;
-    const img = new Image();
-    img.src = testUrl;
-
-    img.onload = () => setImageUrl(testUrl);
-  }, [item.productId]);
+    setImageUrl(item.imageUrl);
+  }, [item.imageUrl]);
 
   return (
     <div className="flex items-center justify-between gap-4 border-b py-4">
