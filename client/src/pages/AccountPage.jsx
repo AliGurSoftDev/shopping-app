@@ -17,7 +17,7 @@ const AccountPage = () => {
   const sections = [
     { title: "My Orders", path: "/orders" },
     { title: "Wishlist", path: "/wishlist" },
-    { title: "Addresses", path: "/address" },
+    { title: "Addresses", path: "/address", state:{prevPage: "account"} },
     { title: "Logout", path: "/logout" },
   ];
 
@@ -49,6 +49,7 @@ const AccountPage = () => {
             <Link
               to={section.path}
               key={section.title}
+              state={section.state}
               className="p-4 bg-gray-100 hover:bg-violet-100 rounded-lg shadow-sm transition flex items-center justify-between"
             >
               <span className="font-medium">{section.title}</span>

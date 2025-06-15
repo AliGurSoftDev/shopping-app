@@ -37,7 +37,7 @@ const CheckoutPage = () => {
   };
 
   const handleAddressChange = () => {
-    navigate("/address", { state: { fromCheckout: true } });
+    navigate("/address", { state: { prevPage:"checkout" } });
   };
 
   if (loading || !cart) return <p>Loading...</p>;

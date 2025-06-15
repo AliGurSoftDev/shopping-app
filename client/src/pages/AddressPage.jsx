@@ -17,7 +17,7 @@ const AddressPage = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const fromCheckout = location.state?.fromCheckout;
+  const prevPage = location.state?.prevPage;
   const userId = 1; // Replace with real userId if needed
 
   const [formVisible, setFormVisible] = useState(false);
@@ -46,8 +46,8 @@ const AddressPage = () => {
     setFormVisible((prev) => !prev);
   };
 
-  const handleBackToCheckout = () => {
-    navigate("/checkout");
+  const handleBackButton = () => {
+    navigate("/" + prevPage);
   };
 
   const handleAddNewAddress = () => {
@@ -78,13 +78,15 @@ const AddressPage = () => {
           )}
           <div className="flex justify-between  mt-8 w-full">
             <div>
-              {fromCheckout && (
+              {prevPage && (
                 <button
                   className="text-start w-fit border-gray-400"
                   hidden={formVisible}
-                  onClick={handleBackToCheckout}
+                  onClick={handleBackButton}
                 >
-                  {"<"} Back to Checkout
+                  {"<"}  
+                  {prevPage === "checkout" && "Back to Checkout"} 
+                  {prevPage === "account" && "Back to Account"}
                 </button>
               )}
             </div>
