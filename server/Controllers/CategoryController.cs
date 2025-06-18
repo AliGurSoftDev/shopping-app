@@ -74,7 +74,7 @@ public class CategoryController : ControllerBase
         _unitOfWork.Categories.Update(existingCategory);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 
     // Delete a category
@@ -88,6 +88,6 @@ public class CategoryController : ControllerBase
         _unitOfWork.Categories.Delete(category);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 }

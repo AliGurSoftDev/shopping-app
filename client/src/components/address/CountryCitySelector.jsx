@@ -24,7 +24,7 @@ const CountryCitySelector = ({countryId, cityId, countryName, cityName, onChange
         name="countryId"
         value={countryId}
         onChange={onChange}
-        className="border p-2 w-full"
+        className="border p-2 w-full bg-transparent"
         required
       >
         <option value="">Select Country</option>
@@ -40,7 +40,7 @@ const CountryCitySelector = ({countryId, cityId, countryName, cityName, onChange
         name="cityId"
         value={cityId}
         onChange={onChange}
-        className="border p-2 w-full"
+        className="border p-2 w-full bg-transparent"
         required
         disabled={!countryId} // Disable if no country selected
       >

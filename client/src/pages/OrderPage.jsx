@@ -50,12 +50,10 @@ const OrdersPage = () => {
         <h1 className="mt-4 text-2xl font-bold text-violet-700">Your Orders</h1>
 
         {loading && <p>Loading orders...</p>}
-        {error && <p className="text-red-600">Error: {error}</p>}
-        {!loading && orders.length === 0 && <p>You have no orders yet.</p>}
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="font-semibold text-gray-700 w-2/5 mb-4 rounded-lg shadow-md border border-blue-300 p-2 transition-all duration-300 hover:shadow-lg focus-visible:border-transparent focus:!ring-transparent ml-auto block text-right"
+          className="font-semibold bg-transparent text-gray-700 w-2/5 mb-4 rounded-lg shadow-md border border-blue-300 p-2 transition-all duration-300 hover:shadow-lg focus-visible:border-transparent focus:!ring-transparent ml-auto block text-right"
         >
           <option value="">All</option>
           <option value="Pending">Pending</option>
@@ -84,6 +82,7 @@ const OrdersPage = () => {
                     allAddresses.find((a) => a.id === order.addressId)
                       ?.addressType
                   }
+                  address={allAddresses.find((a) => a.id === order.addressId)}
                 />
               ))
             ) : (

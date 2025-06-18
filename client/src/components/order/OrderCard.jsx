@@ -7,6 +7,7 @@ const OrderCard = ({
   onCancel,
   addressName,
   addressType,
+  address,
 }) => {
   return (
     <li className="border rounded-md p-4 shadow-sm hover:shadow-md transition">
@@ -43,16 +44,16 @@ const OrderCard = ({
           {order.status === "Pending" && (
             <button
               onClick={() => onCancel(order.id)}
-              className="text-red-600 w-2/5 underline text-sm block hover:border-red-700"
+              className="text-red-600 bg-transparent w-3/5 underline text-sm block hover:border-red-700  focus:outline-none"
             >
               Cancel
             </button>
           )}
           <button
-            className="text-blue-600 underline text-sm block w-2/5"
+            className="bg-transparent text-blue-600 underline w-3/5 text-sm block focus:outline-none"
             onClick={() => toggleExpand(order.id)}
           >
-            {isExpanded ? "Hide Items" : "View Items"}
+            {isExpanded ? "Hide Details" : "View Details"}
           </button>
         </div>
       </div>
@@ -65,13 +66,24 @@ const OrderCard = ({
           {order.items.length === 0 ? (
             <p className="text-sm text-gray-500 italic">No items</p>
           ) : (
-            <ul className="space-y-2">
-              {order.items.map((item, index) => (
-                <li key={index} className="text-sm text-gray-800">
-                  {item.productName} × {item.quantity} — $
-                  {item.unitPrice.toFixed(2)}
-                </li>
-              ))}
+            <ul className="space-y-2 text-sm  text-gray-800 grid grid-cols-[2fr,1fr] gap-4">
+              <div>
+                <p className="font-semibold">Items</p>
+                {order.items.map((item, index) => (
+                  <li key={index}>
+                    {item.productName} × {item.quantity} — $
+                    {item.unitPrice.toFixed(2)}
+                  </li>
+                ))}
+                No Longer Human - Osamu Dazai × 1 — $15.45No Longer Human - Osamu Dazai × 1 — $15.45No Longer Human - Osamu Dazai × 1 — $15.45
+              </div>
+              <div className="text-right">
+                <p className="font-semibold">Address</p>
+                <p> {address.addressDetails}</p>
+                <p>
+                  {address.cityName} / {address.countryName}
+                </p>
+              </div>
             </ul>
           )}
         </div>

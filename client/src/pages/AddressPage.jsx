@@ -18,7 +18,6 @@ const AddressPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const prevPage = location.state?.prevPage;
-  const userId = 1; // Replace with real userId if needed
 
   const [formVisible, setFormVisible] = useState(false);
   const [addressToEdit, setAdressToEdit] = useState(null);
@@ -26,12 +25,12 @@ const AddressPage = () => {
   useEffect(() => {
     dispatch(fetchCountries());
     dispatch(fetchCities());
-    dispatch(fetchAddresses(userId));
+    dispatch(fetchAddresses());
   }, [dispatch]);
 
   const handleRemove = async (addressId) => {
     try {
-      await dispatch(removeAddress({ userId, addressId })).unwrap();
+      await dispatch(removeAddress({ addressId })).unwrap();
       toast.info("Address removed.");
     } catch (errorMessage) {
       toast.error(errorMessage);
@@ -39,7 +38,7 @@ const AddressPage = () => {
   };
 
   const handleSetDefault = (addressId) => {
-    dispatch(setDefault({ userId, addressId }));
+    dispatch(setDefault({ addressId }));
   };
 
   const toggleForm = () => {
@@ -69,7 +68,6 @@ const AddressPage = () => {
             <>
               <h1 className="text-2xl font-bold mb-4 text-violet-600">Your Addresses</h1>
               <AddressList
-                userId={userId}
                 onRemove={handleRemove}
                 onSetDefault={handleSetDefault}
                 onEditAddress={handleEditAddress}
@@ -80,7 +78,7 @@ const AddressPage = () => {
             <div>
               {prevPage && (
                 <button
-                  className="text-start w-fit border-gray-400"
+                  className="text-start w-fit bg-transparent border-gray-400"
                   hidden={formVisible}
                   onClick={handleBackButton}
                 >
@@ -104,7 +102,7 @@ const AddressPage = () => {
 
         {formVisible && (
           <div className="mb-4 ">
-            <AddressForm userId={userId} toggleForm={toggleForm} addressToEdit={addressToEdit}/>
+            <AddressForm toggleForm={toggleForm} addressToEdit={addressToEdit}/>
           </div>
         )}
       </div>

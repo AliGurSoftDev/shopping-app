@@ -13,7 +13,7 @@ const CartItemCard = ({ item, onIncrease, onDecrease, onRemove }) => {
       <img
         src={imageUrl}
         alt={item.productName}
-        className="w-20 h-20 object-cover rounded-2xl"
+        className="w-20 h-20 object-contain rounded-2xl"
       />
 
       {/* Product Info */}

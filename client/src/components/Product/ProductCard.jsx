@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
             <img
               src={imageUrl}
               alt={`Product ${product.name}`}
-              className="w-full h-full object-cover rounded-2xl transition-opacity duration-300"
+              className="w-full h-full object-contain rounded-2xl transition-opacity duration-300"
               onError={(e) => {
                 e.currentTarget.src = placeholderImage;
               }}

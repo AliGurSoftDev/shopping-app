@@ -6,22 +6,20 @@ const getAuthHeader = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
 });
 
-export const fetchOrders = createAsyncThunk(
-  "order/fetchOrders",
-  async () => {
-    const response = await axios.get(`${BASE_URL}/get`, getAuthHeader());
-    return response.data;
-  }
-);
+export const fetchOrders = createAsyncThunk("order/fetchOrders", async () => {
+  const response = await axios.get(`${BASE_URL}/get`, getAuthHeader());
+  return response.data;
+});
 
 export const cancelOrder = createAsyncThunk(
   "order/cancelOrder",
   async ({ orderId }, thunkAPI) => {
     const response = await axios.delete(
-      `${BASE_URL}${orderId}/cancel`,
+      `${BASE_URL}/${orderId}/cancel`,
       getAuthHeader()
     );
-    if (!response.ok) {
+    
+    if (!response.status || response.status !== 200) {
       return thunkAPI.rejectWithValue(
         response.errorData.message || "Failed to cancel the order"
       );
@@ -32,18 +30,21 @@ export const cancelOrder = createAsyncThunk(
 
 export const createOrder = createAsyncThunk(
   "order/createOrder",
-  async ( thunkAPI) => {
-    const response = await axios.post(
-      `${BASE_URL}/placeOrder`,
-      getAuthHeader()
-    );
-    if (!response.ok) {
-      console.log(response.errorData.message)
-      return thunkAPI.rejectWithValue(
-        response.errorData.message || "Failed to create order."
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/placeOrder`,
+        {},
+        getAuthHeader()
       );
+
+      return thunkAPI.dispatch(fetchOrders());
+    } catch (error) {
+      // Check if the API returned an error response
+      const errorMessage = error.response?.data || "Failed to create order.";
+
+      return thunkAPI.rejectWithValue(errorMessage);
     }
-    return thunkAPI.dispatch(fetchOrders());
   }
 );
 

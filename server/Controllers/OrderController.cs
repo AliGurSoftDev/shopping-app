@@ -103,6 +103,7 @@ public class OrderController : ControllerBase
     [HttpPost("placeOrder")]
     public async Task<IActionResult> CreateOrder()
     {
+        System.Console.WriteLine( "Creating order from cart...");
         var userId = User.GetUserId();
         if (userId == null) return StatusCode(500, "Unexpected Token Error.");
 
@@ -116,7 +117,7 @@ public class OrderController : ControllerBase
         var address = await _unitOfWork.Addresses.GetDefaultAddressByUserIdAsync(userId.Value);
         if (address == null)
         {
-            return NotFound("No default address found for user");
+            return NotFound("No default address found. Please add an address before placing an order.");
         }
         try
             {
@@ -148,7 +149,7 @@ public class OrderController : ControllerBase
         _unitOfWork.Orders.Update(existingOrder);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 
     //Update an an existing Order's Status
@@ -158,7 +159,7 @@ public class OrderController : ControllerBase
         await _unitOfWork.Orders.UpdateOrderStatus(id, status);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 
     //Cancel an order
@@ -172,7 +173,7 @@ public class OrderController : ControllerBase
         order.Status = OrderStatusEnum.Cancelled;
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 
     // Delete an order
@@ -186,7 +187,7 @@ public class OrderController : ControllerBase
         _unitOfWork.Orders.Delete(order);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 
 }

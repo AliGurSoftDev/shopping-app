@@ -90,7 +90,7 @@ const WishlistPage = ({ userId = 1 }) => {
 
                 <button
                   onClick={handleEmptyWishlist}
-                  className=" text-violet-700 border-violet-500 hover:bg-red-500 hover:text-white hover:border-red-500 active:bg-red-200 transition-colors duration-100 focus:!outline-none px-4 py-2 rounded"
+                  className="bg-transparent text-violet-700 border-violet-500 hover:bg-red-500 hover:text-white hover:border-red-500 active:bg-red-200 transition-colors duration-100 focus:!outline-none px-4 py-2 rounded"
                 >
                   Empty Wishlist
                 </button>

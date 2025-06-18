@@ -32,11 +32,13 @@ export const emptyCart = createAsyncThunk("cart/emptyCart", async () => {
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
   async ({ productId, quantity }, thunkAPI) => {
-    const response = await axios.delete(
-      `${BASE_URL}/remove`,
-      { productId, quantity },
-      getAuthHeader()
-    );
+    const response = await axios.request({
+      method: "delete",
+      url: `${BASE_URL}/remove`,
+      data: { productId, quantity },
+      ...getAuthHeader(),
+    });
+    // ...getAuthHeader() is used to spread the headers object, since in axios.request, there already exists a headers property
 
     if (!response.ok) throw new Error("Failed to remove item from cart");
 

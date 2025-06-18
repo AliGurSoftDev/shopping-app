@@ -26,14 +26,16 @@ const CheckoutPage = () => {
   const handleCheckout = async () => {
     try {
       const resultAction = await dispatch(createOrder({ userId }));
+
       if (createOrder.fulfilled.match(resultAction)) {
         toast.success("Order created successfully!");
         navigate("/orders");
       } else {
-        alert("Failed to place order.");
+        toast.error(resultAction.payload || "Failed to place order.");
       }
     } catch (err) {
       console.error("Checkout failed", err);
+      toast.error("An unexpected error occurred.");
     }
   };
 
@@ -65,42 +67,57 @@ const CheckoutPage = () => {
             </p>
 
             <h1 className=" text-2xl font-semibold mt-8 ">Delivery Address</h1>
-            {defaultAddress && (
-              <div className="flex justify-between items-center">
-                <div className="mt-6 mb-6 text-gray-600 w-full">
-                  <p className="font-semibold">
-                    <span className="text-black">Address:</span>{" "}
-                    {defaultAddress.addressName} ({defaultAddress.addressType})
-                  </p>
-                  <p>PostCode: {defaultAddress.postCode}</p>
-                </div>
-                <div className="mt-6 mb-6 text-gray-600 w-full">
-                  <p className="">{defaultAddress.addressDetails}</p>
-                  <p>
-                    {defaultAddress.cityName}
-                    {" / "}
-                    {defaultAddress.countryName.toUpperCase()}
-                  </p>
-                </div>
-                <div className="w-1/2">
-                  <button
-                    className="w-full border-solid border-violet-400 text-violet-600
+            {defaultAddress? (
+              <>
+                <div className="flex justify-between items-center">
+                  <div className="mt-6 mb-6 text-gray-600 w-full">
+                    <p className="font-semibold">
+                      <span className="text-black">Address:</span>{" "}
+                      {defaultAddress.addressName} ({defaultAddress.addressType}
+                      )
+                    </p>
+                    <p>PostCode: {defaultAddress.postCode}</p>
+                  </div>
+                  <div className="mt-6 mb-6 text-gray-600 w-full">
+                    <p className="">{defaultAddress.addressDetails}</p>
+                    <p>
+                      {defaultAddress.cityName}
+                      {" / "}
+                      {defaultAddress.countryName.toUpperCase()}
+                    </p>
+                  </div>
+                  <div className="w-1/2">
+                    <button
+                      className="w-full bg-transparent border-solid border-violet-400 text-violet-600
                 hover:bg-violet-400 hover:text-white"
-                    onClick={handleAddressChange}
+                      onClick={handleAddressChange}
+                    >
+                      Change Address
+                    </button>
+                  </div>
+                </div>
+                <div className="text-right mt-8">
+                  <button
+                    onClick={handleCheckout}
+                    className="bg-violet-600 text-white w-1/4 size-12 px-6 py-2 rounded hover:bg-green-600 hover:border-green-600"
                   >
-                    Change Address
+                    Place Order
                   </button>
                 </div>
+              </>
+            ):(
+              <div className="text-center mt-8">
+                <p className="text-gray-600 mb-4">
+                  No default address found. Please add an address to proceed.
+                </p>
+                <button
+                  onClick={handleAddressChange}
+                  className="bg-violet-600 text-white px-6 py-2 rounded hover:bg-violet-400 hover:border-violet-400"
+                >
+                  Add Address
+                </button>
               </div>
             )}
-            <div className="text-right mt-8">
-              <button
-                onClick={handleCheckout}
-                className="bg-violet-600 text-white w-1/4 size-12 px-6 py-2 rounded hover:bg-green-600 hover:border-green-600"
-              >
-                Place Order
-              </button>
-            </div>
           </>
         )}
       </div>

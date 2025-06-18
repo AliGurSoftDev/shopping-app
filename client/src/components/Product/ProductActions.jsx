@@ -71,7 +71,7 @@ const ProductActions = ({ productId, stock, userId }) => {
         </button>
       </div>
       <div>
-        <button className="w-full text-green-600 border-green-600 
+        <button className="w-full bg-transparent text-green-600 border-green-600 
         hover:text-white hover:bg-green-600 hover:border-green-600
          focus:!outline-none
          active:bg-green-300 transition-colors duration-100"

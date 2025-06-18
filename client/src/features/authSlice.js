@@ -7,11 +7,11 @@ const getAuthHeader = () => ({
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async (credentials, thunkAPI) => {
+  async ({ email, password }, thunkAPI) => {
     try {
       const response = await axios.post(
         "http://localhost:5078/api/auth/login",
-        credentials
+        { email, password }
       );
       return response.data;
     } catch (error) {
@@ -22,7 +22,7 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-export const getUser = createAsyncThunk("auth/getUser", async (_, thunkAPI) => {
+export const getUser = createAsyncThunk("auth/getUser", async (thunkAPI) => {
   try {
     const response = await axios.get(
       "http://localhost:5078/api/auth/getUser",
@@ -33,6 +33,28 @@ export const getUser = createAsyncThunk("auth/getUser", async (_, thunkAPI) => {
     return thunkAPI.rejectWithValue(error.response.data);
   }
 });
+
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async ({ firstName, lastName, email, password }, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5078/api/auth/register",
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response.data.message || "Registration failed"
+      );
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",

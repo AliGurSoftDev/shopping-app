@@ -17,8 +17,6 @@ const CategoriesPage = () => {
   return (
     <div className="relative min-h-screen bg-gray-50">
       <MenuBar />
-      <CartSideBar userId={userId} />
-
       {categories && (
         <div className="max-w-5xl mx-auto mt-16 p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
           {categories.map((category) => (
@@ -26,6 +24,7 @@ const CategoriesPage = () => {
           ))}
         </div>
       )}
+      <CartSideBar userId={userId} />;
     </div>
   );
 };

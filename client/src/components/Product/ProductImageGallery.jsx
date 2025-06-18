@@ -10,7 +10,7 @@ const ProductImageGallery = ({ imageUrls = [], imageSize = 96 }) => {
         <img
           src={`/images/placeholder.jpg`}
           alt="No image"
-          className="w-full h-full object-cover rounded-2xl"
+          className="w-full h-full object-contain rounded-2xl"
         />
       </div>
     );
@@ -36,11 +36,11 @@ const ProductImageGallery = ({ imageUrls = [], imageSize = 96 }) => {
   };
 
   return (
-    <div className={`relative h-${imageSize} w-${imageSize}`}>
+    <div className={`relative h-${imageSize} w-${imageSize} bg-white rounded-2xl shadow-lg overflow-hidden flex items-center justify-center`}>
       <img
         src={sortedImages[currentIndex].imageUrl}
         alt={`Product Image ${currentIndex + 1}`}
-        className={`w-full h-full object-cover rounded-2xl transition-opacity duration-300 ${fade ? 'opacity-0' : 'opacity-100'}`}
+        className={`w-full h-full object-contain rounded-2xl transition-opacity duration-300 ${fade ? 'opacity-0' : 'opacity-100'}`}
       />
 
       {/* Navigation Arrows */}

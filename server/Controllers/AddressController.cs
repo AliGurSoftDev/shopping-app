@@ -90,19 +90,27 @@ public class AddressController : ControllerBase
     }
 
     //Create new address
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] AddressCreateDto addressDto)
     {
+        var userId = User.GetUserId();
+        if (userId == null) return StatusCode(500, "Unexpected Token Error.");
+
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         var address = _mapper.Map<Address>(addressDto);
+        address.UserId = userId.Value;
         address.IsDefault = GlobalConstants.No; //A new address should be added isDefault=N at all times to prevent overlapping with another default address.
 
         await _unitOfWork.Addresses.AddAsync(address);
         await _unitOfWork.SaveChangesAsync();
 
-        if (addressDto.IsDefault == GlobalConstants.Yes)
+        var defaultAddress = await _unitOfWork.Addresses.GetDefaultAddressByUserIdAsync(userId.Value);
+        System.Console.WriteLine($"Default Address: {defaultAddress}");
+
+        if (addressDto.IsDefault == GlobalConstants.Yes || defaultAddress == null)
             await SetDefaultAddress(address.Id);
 
 
@@ -125,7 +133,7 @@ public class AddressController : ControllerBase
         _unitOfWork.Addresses.Update(existingAddress);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 
     //Set an address as default by Id
@@ -150,7 +158,7 @@ public class AddressController : ControllerBase
         _unitOfWork.Addresses.Update(newDefaultAddress);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 
     //Disable an address
@@ -169,7 +177,7 @@ public class AddressController : ControllerBase
         _unitOfWork.Addresses.Update(address);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 
     //Delete an address
@@ -186,6 +194,6 @@ public class AddressController : ControllerBase
         _unitOfWork.Addresses.Delete(address);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 }

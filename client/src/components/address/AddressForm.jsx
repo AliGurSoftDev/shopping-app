@@ -4,7 +4,7 @@ import { addNewAddress, editAnAddress } from "../../features/addressSlice";
 import CountryCitySelector from "./CountryCitySelector";
 import { toast } from "react-toastify";
 
-const AddressForm = ({ userId, toggleForm, addressToEdit }) => {
+const AddressForm = ({ toggleForm, addressToEdit }) => {
   const dispatch = useDispatch();
   const [formData, setForm] = useState({
     addressName: "",
@@ -39,7 +39,6 @@ const AddressForm = ({ userId, toggleForm, addressToEdit }) => {
       dispatch(
         editAnAddress({
           ...formData,
-          userId,
           postCode: Number(formData.postCode),
           addressType: formData.addressType,
         })
@@ -48,7 +47,6 @@ const AddressForm = ({ userId, toggleForm, addressToEdit }) => {
       dispatch(
         addNewAddress({
           ...formData,
-          userId,
           postCode: Number(formData.postCode),
           addressType: formData.addressType,
           isDefault: formData.isDefault ? "Y" : "N",
@@ -79,7 +77,7 @@ const AddressForm = ({ userId, toggleForm, addressToEdit }) => {
       <h2 className="text-xl font-semibold mb-6 text-violet-600">{isEdit ? "Edit An Address" : "Add New Address"}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
-          className="border p-2 w-full"
+          className="border p-2 w-full bg-transparent"
           name="addressName"
           placeholder="Address Name"
           value={formData.addressName}
@@ -90,7 +88,7 @@ const AddressForm = ({ userId, toggleForm, addressToEdit }) => {
           name="addressType"
           value={formData.addressType}
           onChange={handleChange}
-          className="border p-2 w-full"
+          className="border p-2 w-full bg-transparent"
         >
           <option value={0}>Home</option>
           <option value={1}>Business</option>
@@ -105,7 +103,7 @@ const AddressForm = ({ userId, toggleForm, addressToEdit }) => {
         />
 
         <input
-          className="border p-2 w-full"
+          className="border p-2 w-full bg-transparent"
           name="postCode"
           type="number"
           placeholder="Post Code"
@@ -114,7 +112,7 @@ const AddressForm = ({ userId, toggleForm, addressToEdit }) => {
           required
         />
         <textarea
-          className="border p-2 w-full"
+          className="border p-2 w-full bg-transparent"
           name="addressDetails"
           placeholder="Address Details"
           value={formData.addressDetails}
@@ -128,6 +126,8 @@ const AddressForm = ({ userId, toggleForm, addressToEdit }) => {
               name="isDefault"
               checked={formData.isDefault}
               onChange={handleChange}
+                className="appearance-none bg-white border border-gray-300 rounded w-4 h-4 checked:bg-violet-800 checked:border-transparent focus:outline-none"
+
             />{" "}
             Set as default
           </label>
@@ -135,14 +135,14 @@ const AddressForm = ({ userId, toggleForm, addressToEdit }) => {
         <div className="justify-self-end">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 mr-2 rounded  hover:bg-blue-400 hover:border-red-60"
+            className="  bg-blue-600 text-white px-4 py-2 mr-2 rounded  hover:bg-blue-400 hover:border-red-60"
           >
             {isEdit ? "Edit Address" : "Add Address"}
           </button>
 
           <button
             onClick={handleCancel}
-            className="px-4 py-2 rounded text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-red-600"
+            className=" bg-transparent px-4 py-2 rounded text-red-600 border-red-600 hover:text-white hover:bg-red-600 hover:border-red-600"
           >
             cancel
           </button>

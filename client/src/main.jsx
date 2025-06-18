@@ -22,6 +22,7 @@ import SearchResultsPage from "./pages/SearchResultsPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
 import AccountPage from "./pages/AccountPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ const App = () => {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/homepage" element={<HomePage />} />
           <Route path="/product/:productId" element={<ProductPage />} />
           <Route path="/products" element={<ProductsPage />} />
@@ -44,12 +45,11 @@ const App = () => {
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/address" element={<AddressPage />} />
           <Route path="/orders" element={<OrderPage />} />
-          <Route
-            path="/products/search/:keyword"
-            element={<SearchResultsPage />}
-          />
+          <Route path="/products/search/:keyword" element={<SearchResultsPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
         </Routes>
       </Router>
       <ToastContainer position="bottom-right" autoClose={3000} />

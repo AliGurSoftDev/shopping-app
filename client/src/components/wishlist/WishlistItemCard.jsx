@@ -12,7 +12,7 @@ const WishlistItemCard = ({ item, onAddToCart, onRemove }) => {
       <img
         src={imageUrl}
         alt={item.productName}
-        className="w-20 h-20 object-cover rounded-2xl"
+        className="w-20 h-20 object-contain rounded-2xl"
       />
 
       <div className="flex-1">

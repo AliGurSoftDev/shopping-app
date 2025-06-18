@@ -7,7 +7,7 @@ const CheckoutItemCard = ({ item }) => {
       <img
         src={item.imageUrl || "/images/placeholder.jpg"}
         alt={item.productName}
-        className="w-20 h-20 object-cover rounded-xl"
+        className="w-20 h-20 object-contain rounded-xl"
       />
 
       {/* Product Info */}

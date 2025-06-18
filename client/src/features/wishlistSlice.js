@@ -38,12 +38,14 @@ export const emptyWishlist = createAsyncThunk(
 export const removeFromWishlist = createAsyncThunk(
   "cart/removeFromWishlist",
   async ({ productId }, thunkAPI) => {
-    const response = await axios.delete(
-      `${BASE_URL}/removewishlist`,
-      { productId, quantity: 1 },
-      getAuthHeader()
-    );
-
+    const response = await axios.request({
+      method: "delete",
+      url: `${BASE_URL}/removewishlist`,
+      data: { productId, quantity: 1 },
+      ...getAuthHeader(),
+    });
+    // ...getAuthHeader() is used to spread the headers object, since in axios.request, there already exists a headers property
+    
     if (!response.ok) throw new Error("Failed to remove item from wishlist");
 
     // Refresh cart

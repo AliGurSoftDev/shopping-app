@@ -41,7 +41,9 @@ const MenuBar = () => {
 
           <button
             onClick={handleSearch}
-            className="bg-transparent text-violet-500 px-4 py-2 rounded-2xl ml-2  border-violet-500 hover:bg-violet-700 hover:text-white"
+            className="bg-transparent text-violet-500 px-4 py-2 rounded-2xl ml-2  border-violet-500 
+            hover:bg-violet-700 hover:text-white hover:border-violet-700 transition-colors duration-300
+            focus:outline-none"
           >
             Search
           </button>

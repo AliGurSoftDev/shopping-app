@@ -92,7 +92,7 @@ public class ProductController : ControllerBase
         _unitOfWork.Products.Update(existingProduct);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 
     // Delete a product
@@ -106,6 +106,6 @@ public class ProductController : ControllerBase
         _unitOfWork.Products.Delete(product);
         await _unitOfWork.SaveChangesAsync();
 
-        return NoContent();
+        return Ok();
     }
 }
