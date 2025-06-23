@@ -30,9 +30,9 @@ export const fetchCategoryDetails = createAsyncThunk(
 const categorySlice = createSlice({
   name: "category",
   initialState: {
-    categories: [],
+    categories: null,
     categoryDetails: null,
-    featuredCategories: [],
+    featuredCategories: null,
     status: "idle",
     error: null,
   },
@@ -41,6 +41,7 @@ const categorySlice = createSlice({
     builder
       .addCase(fetchCategories.pending, (state) => {
         state.status = "loading";
+        state.categories = null; // Reset categories on new fetch
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.status = "succeeded";
@@ -53,6 +54,7 @@ const categorySlice = createSlice({
 
       .addCase(fetchCategoryDetails.pending, (state) => {
         state.status = "loading";
+        state.categoryDetails = null; // Reset category details on new fetch
       })
       .addCase(fetchCategoryDetails.fulfilled, (state, action) => {
         state.status = "succeeded";

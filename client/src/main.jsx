@@ -8,6 +8,7 @@ import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { getUser } from "./features/authSlice";
+import { AuthProvider } from "./context/AuthContext.jsx";
 //page imports
 import HomePage from "./pages/HomePage";
 import ProductPage from "./pages/ProductPage";
@@ -45,11 +46,13 @@ const App = () => {
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/address" element={<AddressPage />} />
           <Route path="/orders" element={<OrderPage />} />
-          <Route path="/products/search/:keyword" element={<SearchResultsPage />} />
+          <Route
+            path="/products/search/:keyword"
+            element={<SearchResultsPage />}
+          />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
         </Routes>
       </Router>
       <ToastContainer position="bottom-right" autoClose={3000} />
@@ -60,7 +63,9 @@ const App = () => {
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </Provider>
   </React.StrictMode>
 );

@@ -52,21 +52,21 @@ const orderSlice = createSlice({
   name: "order",
   initialState: {
     orders: [],
-    loading: false,
+    status: "idle",
     error: null,
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchOrders.pending, (state) => {
-        state.loading = true;
+        state.status = "loading";
         state.error = null;
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.orders = action.payload;
-        state.loading = false;
+        state.status = "succeeded";
       })
       .addCase(fetchOrders.rejected, (state, action) => {
-        state.loading = false;
+        state.status = "failed";
         state.error = action.error.message;
       });
   },

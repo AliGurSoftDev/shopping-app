@@ -40,7 +40,7 @@ export const removeFromCart = createAsyncThunk(
     });
     // ...getAuthHeader() is used to spread the headers object, since in axios.request, there already exists a headers property
 
-    if (!response.ok) throw new Error("Failed to remove item from cart");
+    if (!response.status == 200) throw new Error("Failed to remove item from cart");
 
     // Refresh cart
     return thunkAPI.dispatch(fetchCart());

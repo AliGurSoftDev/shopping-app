@@ -3,32 +3,34 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom"; // if using React Router
 import { fetchCart, emptyCart } from "../../features/cartSlice";
 import { useAnimatedNumber } from "../../hooks/useAnimatedNumber";
+import { useAuth } from "../../context/AuthContext";
 
-const CartSideBar = ({ userId }) => {
+const CartSideBar = () => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   const cart = useSelector((state) => state.cart.cart);
   const status = useSelector((state) => state.cart.status);
   const animatedTotal = useAnimatedNumber(cart?.totalPrice ?? 0, 700);
 
   useEffect(() => {
-    if (userId) dispatch(fetchCart(userId));
-  }, [dispatch, userId]);
+    dispatch(fetchCart());
+  }, [dispatch]);
 
   const toggleCart = () => {
     setIsOpen(!isOpen);
   };
 
   const handleEmptyCart = () => {
-    dispatch(emptyCart(userId)).then(() => dispatch(fetchCart(userId)));
+    dispatch(emptyCart()).then(() => dispatch(fetchCart()));
   };
 
   const handleCheckout = () => {
     navigate("/checkout");
   };
-
+if(isLoggedIn)
   return (
     <div
       className={`fixed top-16 right-0 h-full transition-transform duration-300 ${

@@ -68,6 +68,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
+app.UseMiddleware<ArtificialDelayMiddleware>(); //Artificially delay 2000 milliseconds for testing purposes
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();

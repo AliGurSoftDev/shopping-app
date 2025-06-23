@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { status, error } = useSelector((state) => state.auth);
+  const { status, error, isLoggedIn } = useSelector((state) => state.auth);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +14,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     const resultAction = await dispatch(loginUser({ email, password }));
-    console.log(resultAction);
+    console.log(isLoggedIn, 'isLoggedIn');
     if (loginUser.fulfilled.match(resultAction)) {
       navigate('/homepage');
     }

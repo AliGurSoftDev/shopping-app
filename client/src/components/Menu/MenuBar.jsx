@@ -1,15 +1,20 @@
 import "./MenuBar.css";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom"; // if using React Router
+import { useAuth } from "../../context/AuthContext";
 
 const MenuBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate(); // For navigation
+  const { isLoggedIn } = useAuth();
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
       // You could also use a function prop here to call search logic
       navigate(`/products/search/${encodeURIComponent(searchTerm.trim())}`);
+    } else {
+      // If search term is empty, you might want to redirect to a default page
+      navigate("/products");
     }
   };
 
@@ -60,21 +65,34 @@ const MenuBar = () => {
           <a className="menu-link" href="/categories">
             Categories
           </a>
-          <a className="menu-link" href="/orders">
-            Orders
-          </a>
-          <a className="menu-link" href="/cart">
-            Cart
-          </a>
-          <a className="menu-link" href="/wishlist">
-            Wishlist
-          </a>
-          <a className="menu-link" href="/checkout">
-            Checkout
-          </a>
-          <a className="menu-link" href="/account">
-            Account
-          </a>
+          {isLoggedIn ? (
+            <>
+              <a className="menu-link" href="/orders">
+                Orders
+              </a>
+              <a className="menu-link" href="/cart">
+                Cart
+              </a>
+              <a className="menu-link" href="/wishlist">
+                Wishlist
+              </a>
+              <a className="menu-link" href="/checkout">
+                Checkout
+              </a>
+              <a className="menu-link" href="/account">
+                Account
+              </a>
+            </>
+          ) : (
+            <>
+              <a className="menu-link" href="/login">
+                Sign In
+              </a>
+              <a className="menu-link" href="/register">
+                Sign Up
+              </a>
+            </>
+          )}
         </nav>
       </div>
     </header>

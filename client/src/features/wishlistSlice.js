@@ -22,6 +22,7 @@ export const addToWishlist = createAsyncThunk(
 export const fetchWishlist = createAsyncThunk(
   "cart/fetchWishlist",
   async () => {
+    console.log("Fetching wishlist");
     const response = await axios.get(`${BASE_URL}/wishlist`, getAuthHeader());
     return response.data;
   }
@@ -29,7 +30,7 @@ export const fetchWishlist = createAsyncThunk(
 
 export const emptyWishlist = createAsyncThunk(
   "cart/emptyWishlist",
-  async () => {
+  async (thunkAPI) => {
     await axios.delete(`${BASE_URL}/emptyWishlist`, getAuthHeader());
     return;
   }
@@ -45,8 +46,9 @@ export const removeFromWishlist = createAsyncThunk(
       ...getAuthHeader(),
     });
     // ...getAuthHeader() is used to spread the headers object, since in axios.request, there already exists a headers property
-    
-    if (!response.ok) throw new Error("Failed to remove item from wishlist");
+
+    if (response.status != 200)
+      throw new Error("Failed to remove item from wishlist");
 
     // Refresh cart
     return thunkAPI.dispatch(fetchWishlist());
@@ -74,7 +76,17 @@ const wishlistSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
+      .addCase(removeFromWishlist.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(removeFromWishlist.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(emptyWishlist.pending, (state) => {
+        state.status = "loading";
+      })
       .addCase(emptyWishlist.fulfilled, (state) => {
+        state.status = "succeeded";
         state.wishlist = { items: [], totalPrice: 0 };
       });
   },

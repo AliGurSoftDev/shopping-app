@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAddresses,
   fetchCities,
@@ -9,15 +9,17 @@ import {
   setDefault,
 } from "../features/addressSlice";
 import MenuBar from "../components/menu/MenuBar";
+import Spinner from "../components/ui/Spinner";
 import AddressForm from "../components/address/AddressForm";
 import AddressList from "../components/address/AddressList";
 import { toast } from "react-toastify";
 
 const AddressPage = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
   const prevPage = location.state?.prevPage;
+  const isLoading = useSelector((state) => state.address.status) === "loading";
 
   const [formVisible, setFormVisible] = useState(false);
   const [addressToEdit, setAdressToEdit] = useState(null);
@@ -66,12 +68,20 @@ const AddressPage = () => {
         <div className="mb-4">
           {!formVisible && (
             <>
-              <h1 className="text-2xl font-bold mb-4 text-violet-600">Your Addresses</h1>
-              <AddressList
-                onRemove={handleRemove}
-                onSetDefault={handleSetDefault}
-                onEditAddress={handleEditAddress}
-              />
+              <h1 className="text-2xl font-bold mb-4 text-violet-600">
+                Your Addresses
+              </h1>
+              {isLoading ? (
+                <div className="mt-12 items-center">
+                  <Spinner />
+                </div>
+              ) : (
+                <AddressList
+                  onRemove={handleRemove}
+                  onSetDefault={handleSetDefault}
+                  onEditAddress={handleEditAddress}
+                />
+              )}
             </>
           )}
           <div className="flex justify-between  mt-8 w-full">
@@ -82,8 +92,8 @@ const AddressPage = () => {
                   hidden={formVisible}
                   onClick={handleBackButton}
                 >
-                  {"<"}  
-                  {prevPage === "checkout" && "Back to Checkout"} 
+                  {"<"}
+                  {prevPage === "checkout" && "Back to Checkout"}
                   {prevPage === "account" && "Back to Account"}
                 </button>
               )}
@@ -102,7 +112,10 @@ const AddressPage = () => {
 
         {formVisible && (
           <div className="mb-4 ">
-            <AddressForm toggleForm={toggleForm} addressToEdit={addressToEdit}/>
+            <AddressForm
+              toggleForm={toggleForm}
+              addressToEdit={addressToEdit}
+            />
           </div>
         )}
       </div>

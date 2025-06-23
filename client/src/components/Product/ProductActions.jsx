@@ -4,11 +4,13 @@ import { addToCart } from "../../features/cartSlice";
 import { addToWishlist } from "../../features/wishlistSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const ProductActions = ({ productId, stock, userId }) => {
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   const handleIncrease = () => {
     setQuantity((prev) => Math.min(stock, prev + 1));
@@ -28,10 +30,14 @@ const ProductActions = ({ productId, stock, userId }) => {
     toast.info("Item added to wishlist.");
   };
 
-
   const handleAddAndCheckout = () => {
     handleAddToCart();
-     navigate("/checkout");
+    navigate("/checkout");
+  };
+
+  const handleLoginRedirect = () => {
+    toast.error("Please log in to continue.");
+    navigate("/login");
   };
 
   return (
@@ -53,7 +59,7 @@ const ProductActions = ({ productId, stock, userId }) => {
       </div>
       <div className="flex space-x-2 mt-4">
         <button
-          onClick={handleAddToCart}
+          onClick={isLoggedIn ? handleAddToCart : handleLoginRedirect}
           className="px-4 w-1/2 py-2 bg-blue-600 text-white rounded-lg focus:!outline-none 
           active:bg-blue-300 transition-colors duration-100
           hover:bg-blue-500 hover:border-blue-500"
@@ -61,7 +67,7 @@ const ProductActions = ({ productId, stock, userId }) => {
           Add {quantity} to Cart
         </button>
         <button
-          onClick={handleAddToWishlist}
+          onClick={isLoggedIn ? handleAddToWishlist : handleLoginRedirect}
           className="px-4 w-1/2 py-2 bg-gray-300 text-blackrounded-lg 
           focus:!outline-none 
           active:bg-gray-50 transition-colors duration-100
@@ -71,11 +77,13 @@ const ProductActions = ({ productId, stock, userId }) => {
         </button>
       </div>
       <div>
-        <button className="w-full bg-transparent text-green-600 border-green-600 
+        <button
+          className="w-full bg-transparent text-green-600 border-green-600 
         hover:text-white hover:bg-green-600 hover:border-green-600
          focus:!outline-none
          active:bg-green-300 transition-colors duration-100"
-         onClick={handleAddAndCheckout}>
+          onClick={isLoggedIn ? handleAddAndCheckout : handleLoginRedirect}
+        >
           Add {quantity} & Checkout
         </button>
       </div>

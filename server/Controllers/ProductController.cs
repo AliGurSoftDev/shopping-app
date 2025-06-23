@@ -37,7 +37,7 @@ public class ProductController : ControllerBase
 
     //Get products by categorId
     [HttpGet("category={categoryId}")]
-    public async Task<IActionResult> GetProductByCategory(int categoryId)
+    public async Task<IActionResult> GetProductByCategoryAsync(int categoryId)
     {
         var products = await _unitOfWork.Products.GetByCategoryAsync(categoryId);
         var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
